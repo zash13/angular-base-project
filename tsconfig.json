@@ -11,6 +11,17 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "experimentalDecorators": true,
+    "paths": {
+      "side": [
+        "./dist/side"
+      ],
+      "sidebar": [
+        "./dist/sidebar"
+      ],
+      "ui": [
+        "./dist/ui"
+      ]
+    },
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve"
@@ -21,5 +32,25 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "files": []
+  "files": [],
+  "references": [
+    {
+      "path": "./projects/side/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/side/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ui/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/sidebar/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/sidebar/tsconfig.spec.json"
+    }
+  ]
 }

@@ -6,5 +6,83 @@
   },
   "newProjectRoot": "projects",
   "projects": {
+    "side": {
+      "projectType": "library",
+      "root": "projects/side",
+      "sourceRoot": "projects/side/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/side/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/side/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/side/tsconfig.spec.json"
+          }
+        }
+      }
+    },
+    "ui": {
+      "projectType": "library",
+      "root": "projects/ui",
+      "sourceRoot": "projects/ui/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ui/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ui/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/ui/tsconfig.spec.json"
+          }
+        }
+      }
+    },
+    "sidebar": {
+      "projectType": "library",
+      "root": "projects/sidebar",
+      "sourceRoot": "projects/sidebar/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/sidebar/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/sidebar/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/sidebar/tsconfig.spec.json"
+          }
+        }
+      }
+    }
   }
 }
