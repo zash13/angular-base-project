@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { MenuItem, SidebarNotification, SidebarMessage } from '../models/sidebar.models';
+import { MenuItem, SidebarNotification, SidebarMessage } from '../models/sidebar-models';
 
 export interface SidebarDataSource {
   menus(): Observable<MenuItem[]>;

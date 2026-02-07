@@ -1,1 +1,65 @@
-<p>sidebar works!</p>
+<nav
+  class="sidebar mat-elevation-z4"
+  [ngClass]="{
+    'sidebar-collapsed': config.collapsed,
+    'sidebar-': config.position === 'left',
+    'sidebar-rtl': config.rtl,
+    'sidebar-mobile': isMobile,
+    'sidebar-with-backdrop': config.backdrop && isMobile,
+    'sidebar-bg': config.backgroundImage,
+    'light-theme': config.theme === 'light',
+  }"
+  [style.backgroundImage]="config.backgroundImage ? 'url(' + config.backgroundImage + ')' : null"
+>
+  <!-- Backdrop for mobile -->
+  @if (config.backdrop && isMobile && !config.collapsed) {
+    <div
+      class="sidebar-backdrop mat-app-backdrop"
+      [style.opacity]="config.backdropOpacity || 0.5"
+      (click)="toggleSidebar()"
+    ></div>
+  }
+
+  <div class="sidebar-content">
+    <cdk-virtual-scroll-viewport itemSize="48" class="sidebar-scroll-viewport">
+      <!-- Sidebar Header -->
+      <lib-sidebar-header
+        [config]="config"
+        [logo]="logo"
+        (toggleSidebar)="toggleSidebar()"
+      ></lib-sidebar-header>
+
+      <!-- User Profile -->
+      @if (showProfile) {
+        <lib-sidebar-profile [config]="config" [user]="user"></lib-sidebar-profile>
+      }
+
+      <!-- Search -->
+      @if (showSearch) {
+        <lib-sidebar-search
+          [config]="config"
+          [searchText]="searchText"
+          (searchChanged)="onSearch($event)"
+        ></lib-sidebar-search>
+      }
+
+      <!-- Menu -->
+      <lib-sidebar-menu
+        [menus]="menus"
+        [config]="config"
+        (menuItemClicked)="menuItemClicked.emit($event)"
+      ></lib-sidebar-menu>
+    </cdk-virtual-scroll-viewport>
+  </div>
+
+  <!-- Sidebar Footer -->
+  <lib-sidebar-footer
+    [notifications]="notifications"
+    [messages]="messages"
+    [unreadNotificationsCount]="unreadNotificationsCount"
+    [unreadMessagesCount]="unreadMessagesCount"
+    (notificationClicked)="onNotificationClick($event)"
+    (messageClicked)="onMessageClick($event)"
+    (logoutClicked)="onLogout()"
+  ></lib-sidebar-footer>
+</nav>

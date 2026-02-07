@@ -1,1 +1,15 @@
-<p>header works!</p>
+<div class="sidebar-header">
+  <a [href]="logo.url" class="sidebar-logo" matRipple>
+    <mat-icon *ngIf="config.collapsed">{{ logo.icon || 'menu' }}</mat-icon>
+    <span *ngIf="!config.collapsed" class="logo-text">{{ logo.text }}</span>
+  </a>
+  <button
+    *ngIf="!config.collapsed"
+    class="sidebar-toggle-btn"
+    mat-icon-button
+    (click)="toggleSidebar.emit()"
+    aria-label="Toggle sidebar"
+  >
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+</div>

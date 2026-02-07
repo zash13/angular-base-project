@@ -1,1 +1,116 @@
-<p>footer works!</p>
+<div class="sidebar-footer">
+  <!-- Notifications -->
+  <div class="footer-item">
+    <button
+      mat-icon-button
+      class="footer-btn"
+      [matMenuTriggerFor]="notificationsMenu"
+      [matBadge]="unreadNotificationsCount"
+      matBadgeColor="warn"
+      matBadgeSize="small"
+    >
+      <mat-icon>notifications</mat-icon>
+    </button>
+    <mat-menu #notificationsMenu="matMenu" class="notifications-menu">
+      <div class="dropdown-header">
+        <mat-icon>notifications</mat-icon>
+        <span>Notifications</span>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="notification-items">
+        <div
+          *ngFor="let notification of notifications"
+          class="notification-item"
+          (click)="onNotificationClick(notification)"
+        >
+          <div class="notification-icon" [ngClass]="notification.iconColor">
+            <mat-icon>{{ notification.icon }}</mat-icon>
+          </div>
+          <div class="notification-content">
+            <p class="notification-text mat-body-2">{{ notification.message }}</p>
+            <small class="notification-time mat-caption">{{ notification.time }}</small>
+          </div>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <button mat-menu-item>
+        <mat-icon>visibility</mat-icon>
+        <span>View all notifications</span>
+      </button>
+    </mat-menu>
+  </div>
+
+  <!-- Messages -->
+  <div class="footer-item">
+    <button
+      mat-icon-button
+      class="footer-btn"
+      [matMenuTriggerFor]="messagesMenu"
+      [matBadge]="unreadMessagesCount"
+      matBadgeColor="primary"
+      matBadgeSize="small"
+    >
+      <mat-icon>mail</mat-icon>
+    </button>
+    <mat-menu #messagesMenu="matMenu" class="messages-menu">
+      <div class="dropdown-header">
+        <mat-icon>mail</mat-icon>
+        <span>Messages</span>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="message-items">
+        <div
+          *ngFor="let message of messages"
+          class="message-item"
+          (click)="onMessageClick(message)"
+        >
+          <img [src]="message.avatar" [alt]="message.sender" class="message-avatar" />
+          <div class="message-content">
+            <strong class="message-sender mat-body-2">{{ message.sender }}</strong>
+            <p class="message-text mat-caption">{{ message.message }}</p>
+            <small class="message-time mat-caption">{{ message.time }}</small>
+          </div>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <button mat-menu-item>
+        <mat-icon>inbox</mat-icon>
+        <span>View all messages</span>
+      </button>
+    </mat-menu>
+  </div>
+
+  <!-- Settings -->
+  <div class="footer-item">
+    <button mat-icon-button class="footer-btn" [matMenuTriggerFor]="settingsMenu">
+      <mat-icon>settings</mat-icon>
+    </button>
+    <mat-menu #settingsMenu="matMenu">
+      <button mat-menu-item>
+        <mat-icon>person</mat-icon>
+        <span>My profile</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>help</mat-icon>
+        <span>Help</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+    </mat-menu>
+  </div>
+
+  <!-- Logout -->
+  <div class="footer-item">
+    <button
+      mat-icon-button
+      class="footer-btn"
+      (click)="onLogout()"
+      matTooltip="Logout"
+      matTooltipPosition="right"
+    >
+      <mat-icon>power_settings_new</mat-icon>
+    </button>
+  </div>
+</div>
