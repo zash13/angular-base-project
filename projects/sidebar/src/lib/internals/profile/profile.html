@@ -1,15 +1,18 @@
-<mat-card *ngIf="!config.collapsed" class="sidebar-profile mat-card-flat">
-  <div class="user-profile-content">
-    <div class="user-avatar">
-      <img [src]="user.avatar" [alt]="user.name" class="avatar-img" />
-    </div>
-    <div class="user-info">
-      <h4 class="user-name mat-title">{{ user.name }}</h4>
-      <span class="user-role mat-caption">{{ user.role }}</span>
-      <div class="user-status">
-        <span class="status-indicator" [ngClass]="'status-' + user.status.toLowerCase()"></span>
-        <span class="status-text mat-caption">{{ user.status }}</span>
+@if (!config.collapsed) {
+  <mat-card class="sidebar-profile mat-card-flat">
+    <div class="user-profile-content">
+      <div class="user-avatar">
+        <img [src]="user?.avatar" [alt]="user?.name" class="avatar-img" />
+      </div>
+      <div class="user-info">
+        <h4 class="user-name mat-title">{{ user?.name }}</h4>
+        <span class="user-role mat-caption">{{ user?.role }}</span>
+        <div class="user-status">
+          <!-- Fixed: Added safe navigation operator -->
+          <span class="status-indicator" [ngClass]="'status-' + (user?.status | lowercase)"></span>
+          <span class="status-text mat-caption">{{ user?.status }}</span>
+        </div>
       </div>
     </div>
-  </div>
-</mat-card>
+  </mat-card>
+}

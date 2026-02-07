@@ -1,16 +1,15 @@
 <nav class="sidebar-menu">
   <mat-nav-list>
-    <ng-container *ngFor="let menu of menus; trackBy: trackByMenuItemId">
-      <!-- Header Menu Item -->
-      <div *ngIf="menu.type === 'header'" class="menu-header mat-subtitle-2">
-        {{ menu.title }}
-      </div>
+    @for (menu of menus; track trackByMenuItemId($index, menu)) {
+      @if (menu.type === 'header') {
+        <div class="menu-header mat-subtitle-2">
+          {{ menu.title }}
+        </div>
+      }
 
-      <!-- Regular Link -->
       @if (menu.type === 'link') {
         <a
           mat-list-item
-          [routerLink]="menu.routerLink || []"
           [href]="menu.externalLink"
           [target]="menu.externalLink ? '_blank' : '_self'"
           [ngClass]="{ active: menu.active }"
@@ -37,8 +36,8 @@
       }
 
       <!-- Dropdown Menu -->
-      <div>
-        @if (menu.type === 'dropdown') {
+      @if (menu.type === 'dropdown') {
+        <div>
           <mat-expansion-panel
             class="menu-dropdown"
             [expanded]="isMenuExpanded(menu)"
@@ -80,7 +79,6 @@
               @for (submenu of menu.submenus; track submenu) {
                 <a
                   mat-list-item
-                  [routerLink]="submenu.routerLink || []"
                   [href]="submenu.externalLink"
                   (click)="menuItemClicked.emit(submenu)"
                   matRipple
@@ -102,8 +100,8 @@
               }
             </mat-nav-list>
           </mat-expansion-panel>
-        }
-      </div>
-    </ng-container>
+        </div>
+      }
+    }
   </mat-nav-list>
 </nav>

@@ -1,15 +1,34 @@
-<div class="sidebar-header">
-  <a [href]="logo.url" class="sidebar-logo" matRipple>
-    <mat-icon *ngIf="config.collapsed">{{ logo.icon || 'menu' }}</mat-icon>
-    <span *ngIf="!config.collapsed" class="logo-text">{{ logo.text }}</span>
-  </a>
-  <button
-    *ngIf="!config.collapsed"
-    class="sidebar-toggle-btn"
-    mat-icon-button
-    (click)="toggleSidebar.emit()"
-    aria-label="Toggle sidebar"
-  >
-    <mat-icon>chevron_left</mat-icon>
-  </button>
-</div>
+<header class="sidebar-header">
+  <div class="header-content" [class.collapsed]="config?.collapsed">
+    @if (logo) {
+      <div class="logo-section">
+        @if (logo.icon && !config?.collapsed) {
+          <mat-icon class="logo-icon">{{ logo.icon }}</mat-icon>
+        }
+
+        @if (!config?.collapsed) {
+          <div class="logo-text">
+            @if (logo.url) {
+              <a [href]="logo.url" class="logo-link">
+                <h2 class="logo-title">{{ logo.text || 'Pro Sidebar' }}</h2>
+              </a>
+            } @else {
+              <h2 class="logo-title">{{ logo.text || 'Pro Sidebar' }}</h2>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Toggle Button -->
+    <button
+      mat-icon-button
+      class="toggle-button"
+      (click)="toggleSidebar.emit()"
+      [matTooltip]="config?.collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+      matTooltipPosition="right"
+    >
+      <mat-icon>{{ config?.collapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    </button>
+  </div>
+</header>

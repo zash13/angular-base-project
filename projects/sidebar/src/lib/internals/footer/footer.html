@@ -18,19 +18,17 @@
       </div>
       <mat-divider></mat-divider>
       <div class="notification-items">
-        <div
-          *ngFor="let notification of notifications"
-          class="notification-item"
-          (click)="onNotificationClick(notification)"
-        >
-          <div class="notification-icon" [ngClass]="notification.iconColor">
-            <mat-icon>{{ notification.icon }}</mat-icon>
+        @for (notification of notifications; track notification.id || $index) {
+          <div class="notification-item" (click)="onNotificationClick(notification)">
+            <div class="notification-icon" [ngClass]="notification.iconColor">
+              <mat-icon>{{ notification.icon }}</mat-icon>
+            </div>
+            <div class="notification-content">
+              <p class="notification-text mat-body-2">{{ notification.message }}</p>
+              <small class="notification-time mat-caption">{{ notification.time }}</small>
+            </div>
           </div>
-          <div class="notification-content">
-            <p class="notification-text mat-body-2">{{ notification.message }}</p>
-            <small class="notification-time mat-caption">{{ notification.time }}</small>
-          </div>
-        </div>
+        }
       </div>
       <mat-divider></mat-divider>
       <button mat-menu-item>
@@ -59,18 +57,16 @@
       </div>
       <mat-divider></mat-divider>
       <div class="message-items">
-        <div
-          *ngFor="let message of messages"
-          class="message-item"
-          (click)="onMessageClick(message)"
-        >
-          <img [src]="message.avatar" [alt]="message.sender" class="message-avatar" />
-          <div class="message-content">
-            <strong class="message-sender mat-body-2">{{ message.sender }}</strong>
-            <p class="message-text mat-caption">{{ message.message }}</p>
-            <small class="message-time mat-caption">{{ message.time }}</small>
+        @for (message of messages; track message.id || $index) {
+          <div class="message-item" (click)="onMessageClick(message)">
+            <img [src]="message.avatar" [alt]="message.sender" class="message-avatar" />
+            <div class="message-content">
+              <strong class="message-sender mat-body-2">{{ message.sender }}</strong>
+              <p class="message-text mat-caption">{{ message.message }}</p>
+              <small class="message-time mat-caption">{{ message.time }}</small>
+            </div>
           </div>
-        </div>
+        }
       </div>
       <mat-divider></mat-divider>
       <button mat-menu-item>
