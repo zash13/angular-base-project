@@ -1,44 +1,22 @@
-@use 'sass:color';
 @use '@angular/material' as mat;
 
 :host {
-  /* oriantation */
-  --sidebar-start: 0;
-  --sidebar-end: auto;
-  --sidebar-translate-closed: -100%;
-  /* sizing */
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 80px;
-  /* dark theme */
   --sidebar-bg: #1d1d1d;
   --sidebar-color: #bdbdbd;
   --sidebar-hover-color: #ffffff;
   --sidebar-border-color: #2b2b2b;
   --sidebar-header-color: #6c7b88;
-
-  /* light theme */
-  --sidebar-bg-light: #ffffff;
-  --sidebar-bg-light-hover: #f5f5f5;
-  --sidebar-bg-light-footer: #fafafa;
-  --sidebar-color-light: #666666;
-  --sidebar-hover-color-light: #333333;
-  --sidebar-border-color-light: #e0e0e0;
-  --sidebar-header-color-light: #888888;
 }
+
 $sidebar-width: var(--sidebar-width, 260px);
 $sidebar-collapsed-width: var(--sidebar-collapsed-width, 80px);
-
 $sidebar-bg-dark: var(--sidebar-bg, #1d1d1d);
 $sidebar-color-dark: var(--sidebar-color, #bdbdbd);
 $sidebar-hover-color-dark: var(--sidebar-hover-color, #ffffff);
 $sidebar-border-color-dark: var(--sidebar-border-color, #2b2b2b);
 $sidebar-header-color-dark: var(--sidebar-header-color, #6c7b88);
-$sidebar-bg-light: var(--sidebar-bg-light, #ffffff);
-
-$sidebar-color-light: var(--sidebar-color-light, #666666);
-$sidebar-hover-color-light: var(--sidebar-hover-color-light, #333333);
-$sidebar-border-color-light: var(--sidebar-border-color-light, #e0e0e0);
-$sidebar-header-color-light: var(--sidebar-header-color-light, #888888);
 
 @mixin transition($property: all, $duration: 0.3s, $easing: ease) {
   transition: $property $duration $easing;
@@ -55,20 +33,6 @@ $sidebar-header-color-light: var(--sidebar-header-color-light, #888888);
   flex-direction: column;
 }
 
-// Animations
-@keyframes swing {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(10deg);
-  }
-  75% {
-    transform: rotate(-10deg);
-  }
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -78,79 +42,7 @@ $sidebar-header-color-light: var(--sidebar-header-color-light, #888888);
   }
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-}
 
-// Mixin for applying theme colors
-@mixin sidebar-theme($theme) {
-  $background: map-get($theme, background);
-  $foreground: map-get($theme, foreground);
-  $primary: map-get($theme, primary);
-
-  .sidebar {
-    background-color: mat.get-color-from-palette($background, card);
-    color: mat.get-color-from-palette($foreground, text);
-
-    .sidebar-header {
-      border-bottom-color: mat.get-color-from-palette($foreground, divider);
-    }
-
-    .sidebar-profile {
-      background-color: mat.get-color-from-palette($background, hover) !important;
-    }
-
-    .sidebar-search {
-      .mat-form-field-outline {
-        color: mat.get-color-from-palette($foreground, divider);
-      }
-
-      .mat-input-element {
-        color: mat.get-color-from-palette($foreground, text);
-      }
-
-      .mat-form-field-label {
-        color: mat.get-color-from-palette($foreground, hint-text);
-      }
-    }
-
-    .sidebar-menu {
-      .mat-list-item {
-        color: mat.get-color-from-palette($foreground, text);
-
-        &:hover {
-          background-color: mat.get-color-from-palette($background, hover);
-          color: mat.get-color-from-palette($foreground, text);
-        }
-
-        &.active {
-          background-color: mat.get-color-from-palette($primary, default);
-          color: mat.get-color-from-palette($primary, default-contrast);
-        }
-      }
-
-      .menu-header {
-        color: mat.get-color-from-palette($foreground, secondary-text);
-      }
-    }
-
-    .sidebar-footer {
-      background-color: mat.get-color-from-palette($background, app-bar);
-      border-top-color: mat.get-color-from-palette($foreground, divider);
-    }
-  }
-}
 
 // Main sidebar styles
 .sidebar {
@@ -192,94 +84,7 @@ $sidebar-header-color-light: var(--sidebar-header-color-light, #888888);
     }
   }
 
-  &.sidebar-right {
-    left: auto;
-    right: 0;
-    --sidebar-start: auto;
-    --sidebar-end: 0;
-    --sidebar-translate-closed: 100%;
-  }
-
-  &.sidebar-mobile {
-    transform: translateX(-100%);
-
-    &.sidebar-mobile-open {
-      transform: translateX(0);
-    }
-
-    &.sidebar-right {
-      transform: translateX(100%);
-
-      &.sidebar-mobile-open {
-        transform: translateX(0);
-      }
-    }
-  }
-
-  &.sidebar-with-backdrop {
-    ~ .sidebar-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 999;
-      animation: fadeIn 0.3s ease;
-    }
-  }
-
-  &.sidebar-bg {
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(29, 29, 29, 0.9);
-      z-index: -1;
-    }
-  }
-
-  &.light-theme {
-    background-color: $sidebar-bg-light;
-    color: $sidebar-color-light;
-
-    .sidebar-header {
-      border-bottom-color: $sidebar-border-color-light;
-    }
-
-    .sidebar-profile {
-      background-color: color.adjust($sidebar-bg-light, $lightness: -5%) !important;
-    }
-
-    .sidebar-hover-color {
-      color: $sidebar-hover-color-light;
-    }
-
-    .sidebar-menu {
-      .mat-list-item {
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.04);
-        }
-
-        &.active {
-          background-color: #e3f2fd;
-          color: #1565c0;
-        }
-      }
-
-      .menu-header {
-        color: $sidebar-header-color-light;
-      }
-    }
-
-    .sidebar-footer {
-      background-color: color.adjust($sidebar-bg-light, $lightness: -3%);
-      border-top-color: $sidebar-border-color-light;
-    }
-  }
+  
 }
 
 // Sidebar Content
@@ -301,35 +106,7 @@ $sidebar-header-color-light: var(--sidebar-header-color-light, #888888);
   justify-content: space-between;
   min-height: 64px;
 
-  .sidebar-logo {
-    color: $sidebar-color-dark;
-    font-size: 1.25rem;
-    font-weight: 500;
-    text-decoration: none;
-    @include transition(color);
-    border-radius: 4px;
-    overflow: hidden;
-    padding: 8px;
-
-    &:hover {
-      color: $sidebar-hover-color-dark;
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .logo-text {
-      margin-left: 8px;
-      font-weight: 600;
-    }
-  }
-
-  .sidebar-toggle-btn {
-    color: $sidebar-color-dark;
-    @include transition(color);
-
-    &:hover {
-      color: $sidebar-hover-color-dark;
-    }
-  }
+  
 }
 
 // Sidebar Profile
@@ -731,54 +508,15 @@ $sidebar-header-color-light: var(--sidebar-header-color-light, #888888);
   }
 }
 
-.settings-indicator {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 8px;
-  height: 8px;
-  background-color: #980303;
-  border-radius: 50%;
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border: 2px solid #980303;
-    border-radius: 50%;
-    animation: pulse 1.5s infinite;
-  }
-}
 
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
 
-    &.sidebar-mobile-open {
-      transform: translateX(0);
-    }
-
-    &.sidebar-right {
-      transform: translateX(100%);
-
-      &.sidebar-mobile-open {
-        transform: translateX(0);
-      }
-    }
-  }
-}
 
 :host {
   display: block;
 }
 
-:host-context([dir='rtl']) {
-  --sidebar-start: auto;
-  --sidebar-end: 0;
-}
+
 
 .mat-expansion-panel:not(.mat-expanded)
   .mat-expansion-panel-header:not([aria-disabled='true']):hover {
@@ -796,9 +534,4 @@ $sidebar-header-color-light: var(--sidebar-header-color-light, #888888);
   width: 100%;
 }
 
-// Print styles
-@media print {
-  .sidebar {
-    display: none !important;
-  }
-}
+
