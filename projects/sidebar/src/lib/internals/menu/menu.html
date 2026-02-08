@@ -17,8 +17,8 @@
           [matTooltip]="config.collapsed ? menu.title : null"
           [matTooltipPosition]="'right'"
         >
-          @if (menu.icon) {
-            <mat-icon matListItemIcon>{{ menu.icon }}</mat-icon>
+          @if (menu.matIcon || menu.icon) {
+            <mat-icon matListItemIcon>{{ menu.matIcon || menu.icon }}</mat-icon>
           }
 
           @if (!config.collapsed) {
@@ -48,8 +48,8 @@
           >
             <mat-expansion-panel-header>
               <mat-panel-title>
-                @if (menu.icon) {
-                  <mat-icon>{{ menu.icon }}</mat-icon>
+                @if (menu.matIcon || menu.icon) {
+                  <mat-icon>{{ menu.matIcon || menu.icon }}</mat-icon>
                 }
 
                 @if (!config.collapsed) {
@@ -83,8 +83,8 @@
                   (click)="menuItemClicked.emit(submenu)"
                   matRipple
                 >
-                  @if (submenu.icon) {
-                    <mat-icon matListItemIcon>{{ submenu.icon }}</mat-icon>
+                  @if (submenu.matIcon || submenu.icon) {
+                    <mat-icon matListItemIcon>{{ submenu.matIcon || submenu.icon }}</mat-icon>
                   }
 
                   <span matListItemTitle>{{ submenu.title }}</span>

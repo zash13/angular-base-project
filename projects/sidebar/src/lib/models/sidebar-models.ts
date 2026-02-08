@@ -1,7 +1,13 @@
 export interface MenuItem {
   id: string;
   title: string;
+
   icon?: string;
+
+  matIcon?: string;
+
+  iconType?: 'string' | 'mat-icon' | 'font-awesome' | 'svg';
+
   type: 'link' | 'dropdown' | 'header' | 'divider';
   active?: boolean;
   badge?: {
@@ -42,21 +48,28 @@ export interface UserProfile {
 export interface LogoConfig {
   text: string;
   url: string;
+
   icon?: string;
   image?: string;
-}
 
+  matIcon?: string;
+  iconType?: 'string' | 'mat-icon' | 'image';
+}
 export interface SidebarNotification {
   id: string | number;
   title: string;
   message: string;
+
   icon: string;
+
+  matIcon?: string;
+  iconType?: 'string' | 'mat-icon';
+
   iconColor: string;
   time: string;
   read: boolean;
   type: 'success' | 'info' | 'warning' | 'error';
 }
-
 export interface SidebarMessage {
   id: string | number;
   sender: string;

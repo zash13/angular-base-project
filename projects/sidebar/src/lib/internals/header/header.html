@@ -2,8 +2,14 @@
   <div class="header-content" [class.collapsed]="config?.collapsed">
     @if (logo) {
       <div class="logo-section">
-        @if (logo.icon && !config?.collapsed) {
-          <mat-icon class="logo-icon">{{ logo.icon }}</mat-icon>
+        @if ((logo.matIcon || logo.icon) && !config?.collapsed) {
+          <mat-icon class="logo-icon">
+            {{ logo.matIcon || logo.icon }}
+          </mat-icon>
+        }
+
+        @if (logo.image && !config?.collapsed) {
+          <img [src]="logo.image" [alt]="logo.text" class="logo-image" />
         }
 
         @if (!config?.collapsed) {

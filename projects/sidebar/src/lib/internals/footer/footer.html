@@ -21,7 +21,7 @@
         @for (notification of notifications; track notification.id || $index) {
           <div class="notification-item" (click)="onNotificationClick(notification)">
             <div class="notification-icon" [ngClass]="notification.iconColor">
-              <mat-icon>{{ notification.icon }}</mat-icon>
+              <mat-icon>{{ notification.matIcon || notification.icon }}</mat-icon>
             </div>
             <div class="notification-content">
               <p class="notification-text mat-body-2">{{ notification.message }}</p>
@@ -39,6 +39,7 @@
   </div>
 
   <!-- Messages -->
+  (No changes needed)
   <div class="footer-item">
     <button
       mat-icon-button

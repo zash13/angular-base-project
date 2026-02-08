@@ -1,21 +1,44 @@
-@use '@angular/material' as mat;
 @use 'sass:color';
+@use '@angular/material' as mat;
 
-$sidebar-width: 260px;
-$sidebar-collapsed-width: 80px;
+:host {
+  /* oriantation */
+  --sidebar-start: 0;
+  --sidebar-end: auto;
+  --sidebar-translate-closed: -100%;
+  /* sizing */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 80px;
+  /* dark theme */
+  --sidebar-bg: #1d1d1d;
+  --sidebar-color: #bdbdbd;
+  --sidebar-hover-color: #ffffff;
+  --sidebar-border-color: #2b2b2b;
+  --sidebar-header-color: #6c7b88;
 
-$sidebar-bg-dark: #1d1d1d;
-$sidebar-color-dark: #bdbdbd;
-$sidebar-hover-color-dark: #ffffff;
-$sidebar-border-color-dark: #2b2b2b;
-$sidebar-shadow-color-dark: #131212;
-$sidebar-header-color-dark: #6c7b88;
+  /* light theme */
+  --sidebar-bg-light: #ffffff;
+  --sidebar-bg-light-hover: #f5f5f5;
+  --sidebar-bg-light-footer: #fafafa;
+  --sidebar-color-light: #666666;
+  --sidebar-hover-color-light: #333333;
+  --sidebar-border-color-light: #e0e0e0;
+  --sidebar-header-color-light: #888888;
+}
+$sidebar-width: var(--sidebar-width, 260px);
+$sidebar-collapsed-width: var(--sidebar-collapsed-width, 80px);
 
-$sidebar-bg-light: #ffffff;
-$sidebar-color-light: #666666;
-$sidebar-hover-color-light: #333333;
-$sidebar-border-color-light: #e0e0e0;
-$sidebar-header-color-light: #888888;
+$sidebar-bg-dark: var(--sidebar-bg, #1d1d1d);
+$sidebar-color-dark: var(--sidebar-color, #bdbdbd);
+$sidebar-hover-color-dark: var(--sidebar-hover-color, #ffffff);
+$sidebar-border-color-dark: var(--sidebar-border-color, #2b2b2b);
+$sidebar-header-color-dark: var(--sidebar-header-color, #6c7b88);
+$sidebar-bg-light: var(--sidebar-bg-light, #ffffff);
+
+$sidebar-color-light: var(--sidebar-color-light, #666666);
+$sidebar-hover-color-light: var(--sidebar-hover-color-light, #333333);
+$sidebar-border-color-light: var(--sidebar-border-color-light, #e0e0e0);
+$sidebar-header-color-light: var(--sidebar-header-color-light, #888888);
 
 @mixin transition($property: all, $duration: 0.3s, $easing: ease) {
   transition: $property $duration $easing;
@@ -143,7 +166,8 @@ $sidebar-header-color-light: #888888;
   overflow: hidden;
   @include flex-column;
   @include mat.elevation(4);
-
+  inset-inline-start: var(--sidebar-start);
+  inset-inline-end: var(--sidebar-end);
   &.sidebar-collapsed {
     width: $sidebar-collapsed-width;
 
@@ -171,6 +195,9 @@ $sidebar-header-color-light: #888888;
   &.sidebar-right {
     left: auto;
     right: 0;
+    --sidebar-start: auto;
+    --sidebar-end: 0;
+    --sidebar-translate-closed: 100%;
   }
 
   &.sidebar-mobile {
@@ -746,6 +773,11 @@ $sidebar-header-color-light: #888888;
 
 :host {
   display: block;
+}
+
+:host-context([dir='rtl']) {
+  --sidebar-start: auto;
+  --sidebar-end: 0;
 }
 
 .mat-expansion-panel:not(.mat-expanded)
