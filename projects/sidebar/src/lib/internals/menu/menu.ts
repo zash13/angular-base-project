@@ -22,42 +22,30 @@ import { MenuItem, SidebarConfig } from '../../models/sidebar-models';
   templateUrl: './menu.html',
   styleUrls: ['./menu.scss'],
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent {
   @Input() menus: MenuItem[] = [];
   @Input() config: Partial<SidebarConfig> = {};
   @Output() menuItemClicked = new EventEmitter<MenuItem>();
 
   expandedMenuIds = new Set<string>();
 
-  ngOnInit() {
-    // Initialize expanded menus
-    this.menus.forEach((menu) => {
-      if (menu.active && menu.type === 'dropdown') {
-        this.expandedMenuIds.add(menu.id);
-      }
-    });
-  }
-
   toggleMenu(menu: MenuItem) {
+    if (this.config.collapsed) return; // Don't expand when collapsed
+
     if (menu.type === 'dropdown') {
       if (this.expandedMenuIds.has(menu.id)) {
         this.expandedMenuIds.delete(menu.id);
       } else {
         this.expandedMenuIds.add(menu.id);
       }
-      menu.active = !menu.active;
     }
+  }
 
-    if (menu.type === 'link') {
-      this.menuItemClicked.emit(menu);
-    }
+  onMenuItemClick(menu: MenuItem) {
+    this.menuItemClicked.emit(menu);
   }
 
   isMenuExpanded(menu: MenuItem): boolean {
     return menu.type === 'dropdown' ? this.expandedMenuIds.has(menu.id) : false;
-  }
-
-  trackByMenuItemId(index: number, item: MenuItem): string {
-    return item.id;
   }
 }

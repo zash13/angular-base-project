@@ -5,25 +5,22 @@
   >
     @if (logo) {
       <div class="logo-section flex items-center gap-3">
-        @if ((logo.matIcon || logo.icon) && !config?.collapsed) {
-          @if (logo.iconType === 'mat-icon') {
-            <span class="logo-icon material-icons text-gray-700">
-              {{ logo.matIcon || logo.icon }}
-            </span>
-          } @else if (logo.iconType === 'image') {
-            <img [src]="logo.icon" [alt]="logo.text" class="logo-icon h-6 w-6" />
-          } @else {
-            <span class="logo-icon text-xl">
-              {{ logo.icon }}
-            </span>
-          }
-        }
-
-        @if (logo.image && !config?.collapsed) {
-          <img [src]="logo.image" [alt]="logo.text" class="logo-image h-8 w-auto" />
-        }
-
+        <!-- Expanded State -->
         @if (!config?.collapsed) {
+          @if (logo.image) {
+            <img [src]="logo.image" [alt]="logo.text" class="logo-image h-8 w-auto" />
+          } @else if (logo.icon) {
+            @if (logo.iconType === 'mat-icon') {
+              <span class="logo-icon material-icons text-gray-700">
+                {{ logo.icon }}
+              </span>
+            } @else {
+              <span class="logo-icon text-2xl">
+                {{ logo.icon }}
+              </span>
+            }
+          }
+
           <div class="logo-text">
             @if (logo.url) {
               <a [href]="logo.url" class="logo-link">
@@ -37,6 +34,30 @@
               </h2>
             }
           </div>
+        }
+        <!-- Collapsed State -->
+        @else {
+          @if (logo.collapsedImage) {
+            <img
+              [src]="logo.collapsedImage"
+              [alt]="logo.text"
+              class="logo-collapsed-image h-6 w-6"
+            />
+          } @else if (logo.collapsedIcon) {
+            <span class="logo-collapsed-icon material-icons text-gray-700">
+              {{ logo.collapsedIcon }}
+            </span>
+          } @else if (logo.icon) {
+            @if (logo.iconType === 'mat-icon') {
+              <span class="logo-collapsed-icon material-icons text-gray-700">
+                {{ logo.icon }}
+              </span>
+            } @else {
+              <span class="logo-collapsed-icon text-xl">
+                {{ logo.icon }}
+              </span>
+            }
+          }
         }
       </div>
     }

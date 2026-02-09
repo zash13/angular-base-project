@@ -6,7 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { SidebarNotification, SidebarMessage } from '../../models/sidebar-models';
+import { SidebarNotification, SidebarMessage, SidebarConfig } from '../../models/sidebar-models';
 @Component({
   selector: 'lib-sidebar-footer',
   standalone: true,
@@ -27,10 +27,31 @@ export class FooterComponent {
   @Input() unreadMessagesCount = 0;
   @Input() notifications: SidebarNotification[] = [];
   @Input() messages: SidebarMessage[] = [];
+  @Input() config: Partial<SidebarConfig> = {};
+  @Output() logoutClicked = new EventEmitter<void>();
 
   showNotifications = false;
   showMessages = false;
   showSettings = false;
+
+  get isCollapsed(): boolean {
+    return this.config.collapsed ?? false;
+  }
+
+  get showSingleButton(): boolean {
+    return this.config.footerCollapsedMode === 'single' && this.isCollapsed;
+  }
+
+  get showButton(): 'notifications' | 'messages' | 'settings' | 'logout' {
+    return this.config.collapsedFooterButton || 'logout';
+  }
+
+  shouldShowButton(buttonType: string): boolean {
+    if (!this.isCollapsed) return true;
+    if (this.config.footerCollapsedMode === 'all') return true;
+    if (this.config.footerCollapsedMode === 'none') return false;
+    return this.showButton === buttonType;
+  }
 
   toggleNotifications() {
     this.showNotifications = !this.showNotifications;

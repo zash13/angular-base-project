@@ -1,114 +1,138 @@
-<div class="flex h-screen flex-col justify-between border-e border-gray-100 bg-white">
-  <div class="px-4 py-6">
-    <span class="grid h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
-      Logo
-    </span>
+<div class="sidebar-menu">
+  <ul class="menu-list space-y-1">
+    <!-- Dynamic Loop for Menu Items -->
+    @for (menu of menus; track menu.id) {
+      <!-- Header Type -->
+      @if (menu.type === 'header' && !config?.collapsed) {
+        <li class="menu-header px-4 py-2 text-xs font-semibold uppercase text-gray-500">
+          {{ menu.title }}
+        </li>
+      }
 
-    <ul class="mt-6 space-y-1">
-      <!-- Dynamic Loop for Menu Items -->
-      <li *ngFor="let menu of menus">
-        <!-- Header Type -->
-        <ng-container *ngIf="menu.type === 'header'">
-          <div class="menu-header mat-subtitle-2">{{ menu.title }}</div>
-        </ng-container>
-
-        <!-- Link Type -->
-        <ng-container *ngIf="menu.type === 'link'">
+      <!-- Link Type -->
+      @if (menu.type === 'link') {
+        <li class="menu-item">
           <a
-            *ngIf="menu.routerLink || menu.externalLink"
             [href]="menu.externalLink || menu.routerLink"
             [target]="menu.externalLink ? '_blank' : '_self'"
-            [ngClass]="{ active: menu.active }"
-            class="block rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700"
+            [ngClass]="{
+              active: menu.active,
+              collapsed: config?.collapsed,
+            }"
+            class="menu-link flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100"
+            (click)="onMenuItemClick(menu)"
           >
             <!-- Icon -->
-            <ng-container *ngIf="menu.matIcon || menu.icon">
-              <mat-icon *ngIf="menu.iconType === 'mat-icon'">{{ menu.matIcon }}</mat-icon>
-              <i *ngIf="menu.iconType === 'font-awesome'" class="fa" [ngClass]="menu.icon"></i>
-              <img *ngIf="menu.iconType === 'svg'" [src]="menu.icon" alt="icon" class="w-5 h-5" />
-            </ng-container>
-            <!-- Title -->
-            <span>{{ menu.title }}</span>
+            <div class="menu-icon flex-shrink-0">
+              @if (menu.icon) {
+                @if (menu.iconType === 'mat-icon') {
+                  <span class="material-icons text-gray-600">{{ menu.icon }}</span>
+                } @else if (menu.iconType === 'font-awesome') {
+                  <i class="fa {{ menu.icon }} text-gray-600"></i>
+                } @else {
+                  <img [src]="menu.icon" alt="icon" class="h-5 w-5 text-gray-600" />
+                }
+              }
+            </div>
 
-            <!-- Badge -->
-            <ng-container *ngIf="menu.badge">
-              <mat-chip-listbox matListItemMeta>
-                <mat-chip [ngClass]="menu.badge.class" selected>{{ menu.badge.text }}</mat-chip>
-              </mat-chip-listbox>
-            </ng-container>
+            <!-- Title (hidden when collapsed) -->
+            @if (!config?.collapsed) {
+              <span class="menu-title ml-3 flex-1 text-sm font-medium">{{ menu.title }}</span>
+            }
+
+            <!-- Badge (hidden when collapsed) -->
+            @if (menu.badge && !config?.collapsed) {
+              <span
+                class="menu-badge ml-auto rounded-full px-2 py-0.5 text-xs font-medium"
+                [ngClass]="{
+                  'bg-red-100 text-red-800': menu.badge.class === 'badge-danger',
+                  'bg-green-100 text-green-800': menu.badge.class === 'badge-success',
+                  'bg-yellow-100 text-yellow-800': menu.badge.class === 'badge-warning',
+                  'bg-blue-100 text-blue-800':
+                    menu.badge.class === 'badge-info' || menu.badge.class === 'badge-primary',
+                }"
+              >
+                {{ menu.badge.text }}
+              </span>
+            }
           </a>
-        </ng-container>
+        </li>
+      }
 
-        <!-- Dropdown Type -->
-        <ng-container *ngIf="menu.type === 'dropdown'">
-          <details class="group">
-            <summary
-              class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-            >
-              <ng-container *ngIf="menu.matIcon || menu.icon">
-                <mat-icon *ngIf="menu.iconType === 'mat-icon'">{{ menu.matIcon }}</mat-icon>
-                <i *ngIf="menu.iconType === 'font-awesome'" class="fa" [ngClass]="menu.icon"></i>
-                <img *ngIf="menu.iconType === 'svg'" [src]="menu.icon" alt="icon" class="w-5 h-5" />
-              </ng-container>
-              <span class="text-sm font-medium">{{ menu.title }}</span>
-              <span class="shrink-0 transition duration-300 group-open:-rotate-180">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="size-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
+      <!-- Dropdown Type -->
+      @if (menu.type === 'dropdown') {
+        <li class="dropdown-item">
+          <div
+            class="dropdown-toggle flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100 cursor-pointer"
+            [ngClass]="{ collapsed: config?.collapsed }"
+            (click)="toggleMenu(menu)"
+          >
+            <!-- Icon -->
+            <div class="menu-icon flex-shrink-0">
+              @if (menu.icon) {
+                @if (menu.iconType === 'mat-icon') {
+                  <span class="material-icons text-gray-600">{{ menu.icon }}</span>
+                } @else if (menu.iconType === 'font-awesome') {
+                  <i class="fa {{ menu.icon }} text-gray-600"></i>
+                } @else {
+                  <img [src]="menu.icon" alt="icon" class="h-5 w-5 text-gray-600" />
+                }
+              }
+            </div>
+
+            <!-- Title (hidden when collapsed) -->
+            @if (!config?.collapsed) {
+              <span class="menu-title ml-3 flex-1 text-sm font-medium">{{ menu.title }}</span>
+
+              <!-- Dropdown Arrow -->
+              <span
+                class="dropdown-arrow ml-auto transition-transform"
+                [class.rotate-180]="isMenuExpanded(menu)"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
-                    fill-rule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  ></path>
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </span>
-            </summary>
+            }
+          </div>
 
-            <ul class="mt-2 space-y-1 px-4">
-              <li *ngFor="let submenu of menu.submenus">
-                <a
-                  [href]="submenu.externalLink || submenu.routerLink"
-                  class="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                >
-                  <ng-container *ngIf="submenu.matIcon || submenu.icon">
-                    <mat-icon *ngIf="submenu.iconType === 'mat-icon'">{{
-                      submenu.matIcon
-                    }}</mat-icon>
-                    <i
-                      *ngIf="submenu.iconType === 'font-awesome'"
-                      class="fa"
-                      [ngClass]="submenu.icon"
-                    ></i>
-                    <img
-                      *ngIf="submenu.iconType === 'svg'"
-                      [src]="submenu.icon"
-                      alt="icon"
-                      class="w-5 h-5"
-                    />
-                  </ng-container>
-                  <span>{{ submenu.title }}</span>
-
-                  <ng-container *ngIf="submenu.badge">
-                    <mat-chip-listbox matListItemMeta>
-                      <mat-chip [ngClass]="submenu.badge.class" selected>{{
-                        submenu.badge.text
-                      }}</mat-chip>
-                    </mat-chip-listbox>
-                  </ng-container>
-                </a>
-              </li>
+          <!-- Submenu (only when expanded and not collapsed) -->
+          @if (isMenuExpanded(menu) && !config?.collapsed) {
+            <ul class="submenu-list mt-1 space-y-1 pl-4">
+              @for (submenu of menu.submenus; track submenu.id) {
+                <li class="submenu-item">
+                  <a
+                    [href]="submenu.externalLink || submenu.routerLink"
+                    class="submenu-link flex items-center rounded-lg px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-100"
+                    (click)="onMenuItemClick(submenu)"
+                  >
+                    @if (submenu.icon && !config?.collapsed) {
+                      <span class="submenu-icon mr-3 text-gray-400">
+                        @if (submenu.iconType === 'mat-icon') {
+                          <span class="material-icons text-sm">{{ submenu.icon }}</span>
+                        } @else {
+                          <i class="fa {{ submenu.icon }} text-sm"></i>
+                        }
+                      </span>
+                    }
+                    <span>{{ submenu.title }}</span>
+                  </a>
+                </li>
+              }
             </ul>
-          </details>
-        </ng-container>
+          }
+        </li>
+      }
 
-        <!-- Divider Type -->
-        <ng-container *ngIf="menu.type === 'divider'">
-          <hr class="my-4 border-t border-gray-200" />
-        </ng-container>
-      </li>
-    </ul>
-  </div>
+      <!-- Divider Type -->
+      @if (menu.type === 'divider' && !config?.collapsed) {
+        <li class="menu-divider my-2 border-t border-gray-200"></li>
+      }
+    }
+  </ul>
 </div>

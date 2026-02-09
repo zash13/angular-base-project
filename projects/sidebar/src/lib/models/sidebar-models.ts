@@ -1,10 +1,8 @@
 export interface MenuItem {
   id: string;
-  title: string;
+  title?: string;
 
   icon?: string;
-
-  matIcon?: string;
 
   iconType?: 'string' | 'mat-icon' | 'font-awesome' | 'svg';
 
@@ -21,7 +19,6 @@ export interface MenuItem {
   permissions?: string[];
   order?: number;
 }
-
 export interface SidebarConfig {
   width: number;
   collapsedWidth: number;
@@ -35,6 +32,21 @@ export interface SidebarConfig {
   theme: 'dark' | 'light' | 'auto';
   rtl: boolean;
   backgroundImage?: string;
+  // New property for footer behavior
+  footerCollapsedMode?: 'all' | 'single' | 'none';
+  // Which button to show when collapsed
+  collapsedFooterButton?: 'notifications' | 'messages' | 'settings' | 'logout';
+}
+
+export interface LogoConfig {
+  text: string;
+  url: string;
+  icon?: string;
+  image?: string;
+  iconType?: 'string' | 'mat-icon' | 'image';
+  // For collapsed state
+  collapsedIcon?: string;
+  collapsedImage?: string;
 }
 
 export interface UserProfile {
@@ -45,16 +57,6 @@ export interface UserProfile {
   email?: string;
 }
 
-export interface LogoConfig {
-  text: string;
-  url: string;
-
-  icon?: string;
-  image?: string;
-
-  matIcon?: string;
-  iconType?: 'string' | 'mat-icon' | 'image';
-}
 export interface SidebarNotification {
   id: string | number;
   title: string;
@@ -64,8 +66,8 @@ export interface SidebarNotification {
 
   matIcon?: string;
   iconType?: 'string' | 'mat-icon';
-
   iconColor: string;
+
   time: string;
   read: boolean;
   type?: 'info' | 'success' | 'warning' | 'error' | 'danger' | 'info-alt';

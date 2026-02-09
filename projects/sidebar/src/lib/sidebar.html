@@ -4,14 +4,13 @@
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
   />
-
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
+
 <nav
   class="sidebar mat-elevation-z4"
   [ngClass]="{
     'sidebar-collapsed': config.collapsed,
-    'sidebar-': config.position === 'left',
+    'sidebar-left': config.position === 'left',
     'sidebar-rtl': config.rtl,
     'sidebar-mobile': isMobile,
     'sidebar-with-backdrop': config.backdrop && isMobile,
@@ -19,6 +18,7 @@
     'light-theme': config.theme === 'light',
   }"
   [style.backgroundImage]="config.backgroundImage ? 'url(' + config.backgroundImage + ')' : null"
+  [style.width]="sidebarWidth"
 >
   <!-- Backdrop for mobile -->
   @if (config.backdrop && isMobile && !config.collapsed) {
@@ -30,43 +30,54 @@
   }
 
   <div class="sidebar-content">
-    <cdk-virtual-scroll-viewport itemSize="48" class="sidebar-scroll-viewport">
-      <!-- Sidebar Header -->
+    <!-- Fixed Header (non-scrollable) -->
+    <div class="sidebar-header-container">
       <lib-sidebar-header
         [config]="config"
         [logo]="logo"
         (toggleSidebar)="toggleSidebar()"
       ></lib-sidebar-header>
+    </div>
 
-      <!-- User Profile -->
-      @if (!showProfile) {
-        <lib-sidebar-profile [config]="config" [user]="user"></lib-sidebar-profile>
-      }
+    <!-- User Profile (non-scrollable) -->
+    @if (!showProfile) {
+      <div class="sidebar-profile-container">
+        <lib-sidebar-profile></lib-sidebar-profile>
+      </div>
+    }
 
-      <!-- Search -->
-      @if (!showSearch) {
+    <!-- Search (non-scrollable) -->
+    @if (!showSearch) {
+      <div class="sidebar-search-container">
         <lib-sidebar-search
           [config]="config"
           [searchText]="searchText"
           (searchChanged)="onSearch($event)"
         ></lib-sidebar-search>
-      }
+      </div>
+    }
 
-      <!-- Menu -->
-      <lib-sidebar-menu
-        [menus]="menus"
-        [config]="config"
-        (menuItemClicked)="menuItemClicked.emit($event)"
-      ></lib-sidebar-menu>
-    </cdk-virtual-scroll-viewport>
+    <!-- Scrollable Menu Area -->
+    <div class="sidebar-menu-scroll-container">
+      <cdk-virtual-scroll-viewport itemSize="48" class="sidebar-scroll-viewport">
+        <lib-sidebar-menu
+          [menus]="menus"
+          [config]="config"
+          (menuItemClicked)="menuItemClicked.emit($event)"
+        ></lib-sidebar-menu>
+      </cdk-virtual-scroll-viewport>
+    </div>
   </div>
 
-  <!-- Sidebar Footer -->
-  <lib-sidebar-footer
-    [notifications]="notifications"
-    [messages]="messages"
-    [unreadNotificationsCount]="unreadNotificationsCount"
-    [unreadMessagesCount]="unreadMessagesCount"
-    (logoutClicked)="onLogout()"
-  ></lib-sidebar-footer>
+  <!-- Fixed Footer (non-scrollable) -->
+  <div class="sidebar-footer-container">
+    <lib-sidebar-footer
+      [notifications]="notifications"
+      [messages]="messages"
+      [unreadNotificationsCount]="unreadNotificationsCount"
+      [unreadMessagesCount]="unreadMessagesCount"
+      [config]="config"
+      (logoutClicked)="onLogout()"
+    ></lib-sidebar-footer>
+  </div>
 </nav>
