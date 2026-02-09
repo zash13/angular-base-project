@@ -1,107 +1,114 @@
-<nav class="sidebar-menu">
-  <mat-nav-list>
-    @for (menu of menus; track trackByMenuItemId($index, menu)) {
-      @if (menu.type === 'header') {
-        <div class="menu-header mat-subtitle-2">
-          {{ menu.title }}
-        </div>
-      }
+<div class="flex h-screen flex-col justify-between border-e border-gray-100 bg-white">
+  <div class="px-4 py-6">
+    <span class="grid h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
+      Logo
+    </span>
 
-      @if (menu.type === 'link') {
-        <a
-          mat-list-item
-          [href]="menu.externalLink"
-          [target]="menu.externalLink ? '_blank' : '_self'"
-          [ngClass]="{ active: menu.active }"
-          matRipple
-          [matTooltip]="config.collapsed ? menu.title : null"
-          [matTooltipPosition]="'right'"
-        >
-          @if (menu.matIcon || menu.icon) {
-            <mat-icon matListItemIcon>{{ menu.matIcon || menu.icon }}</mat-icon>
-          }
+    <ul class="mt-6 space-y-1">
+      <!-- Dynamic Loop for Menu Items -->
+      <li *ngFor="let menu of menus">
+        <!-- Header Type -->
+        <ng-container *ngIf="menu.type === 'header'">
+          <div class="menu-header mat-subtitle-2">{{ menu.title }}</div>
+        </ng-container>
 
-          @if (!config.collapsed) {
-            <span matListItemTitle>{{ menu.title }}</span>
-          }
-
-          @if (menu.badge && !config.collapsed) {
-            <mat-chip-listbox matListItemMeta>
-              <mat-chip [ngClass]="menu.badge.class" selected>
-                {{ menu.badge.text }}
-              </mat-chip>
-            </mat-chip-listbox>
-          }
-        </a>
-      }
-
-      <!-- Dropdown Menu -->
-      @if (menu.type === 'dropdown') {
-        <div>
-          <mat-expansion-panel
-            class="menu-dropdown"
-            [expanded]="isMenuExpanded(menu)"
-            (expandedChange)="toggleMenu(menu)"
-            hideToggle
-            [matTooltip]="config.collapsed ? menu.title : null"
-            [matTooltipPosition]="'right'"
+        <!-- Link Type -->
+        <ng-container *ngIf="menu.type === 'link'">
+          <a
+            *ngIf="menu.routerLink || menu.externalLink"
+            [href]="menu.externalLink || menu.routerLink"
+            [target]="menu.externalLink ? '_blank' : '_self'"
+            [ngClass]="{ active: menu.active }"
+            class="block rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700"
           >
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                @if (menu.matIcon || menu.icon) {
-                  <mat-icon>{{ menu.matIcon || menu.icon }}</mat-icon>
-                }
+            <!-- Icon -->
+            <ng-container *ngIf="menu.matIcon || menu.icon">
+              <mat-icon *ngIf="menu.iconType === 'mat-icon'">{{ menu.matIcon }}</mat-icon>
+              <i *ngIf="menu.iconType === 'font-awesome'" class="fa" [ngClass]="menu.icon"></i>
+              <img *ngIf="menu.iconType === 'svg'" [src]="menu.icon" alt="icon" class="w-5 h-5" />
+            </ng-container>
+            <!-- Title -->
+            <span>{{ menu.title }}</span>
 
-                @if (!config.collapsed) {
-                  <span>{{ menu.title }}</span>
-                }
-              </mat-panel-title>
+            <!-- Badge -->
+            <ng-container *ngIf="menu.badge">
+              <mat-chip-listbox matListItemMeta>
+                <mat-chip [ngClass]="menu.badge.class" selected>{{ menu.badge.text }}</mat-chip>
+              </mat-chip-listbox>
+            </ng-container>
+          </a>
+        </ng-container>
 
-              <div class="panel-actions">
-                @if (menu.badge && !config.collapsed) {
-                  <mat-chip-listbox>
-                    <mat-chip [ngClass]="menu.badge.class" selected>
-                      {{ menu.badge.text }}
-                    </mat-chip>
-                  </mat-chip-listbox>
-                }
-
-                @if (!config.collapsed) {
-                  <mat-icon class="dropdown-icon">
-                    {{ isMenuExpanded(menu) ? 'expand_less' : 'expand_more' }}
-                  </mat-icon>
-                }
-              </div>
-            </mat-expansion-panel-header>
-
-            <!-- Submenu -->
-            <mat-nav-list>
-              @for (submenu of menu.submenus; track submenu) {
-                <a
-                  mat-list-item
-                  [href]="submenu.externalLink"
-                  (click)="menuItemClicked.emit(submenu)"
-                  matRipple
+        <!-- Dropdown Type -->
+        <ng-container *ngIf="menu.type === 'dropdown'">
+          <details class="group">
+            <summary
+              class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            >
+              <ng-container *ngIf="menu.matIcon || menu.icon">
+                <mat-icon *ngIf="menu.iconType === 'mat-icon'">{{ menu.matIcon }}</mat-icon>
+                <i *ngIf="menu.iconType === 'font-awesome'" class="fa" [ngClass]="menu.icon"></i>
+                <img *ngIf="menu.iconType === 'svg'" [src]="menu.icon" alt="icon" class="w-5 h-5" />
+              </ng-container>
+              <span class="text-sm font-medium">{{ menu.title }}</span>
+              <span class="shrink-0 transition duration-300 group-open:-rotate-180">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="size-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                  @if (submenu.matIcon || submenu.icon) {
-                    <mat-icon matListItemIcon>{{ submenu.matIcon || submenu.icon }}</mat-icon>
-                  }
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+            </summary>
 
-                  <span matListItemTitle>{{ submenu.title }}</span>
+            <ul class="mt-2 space-y-1 px-4">
+              <li *ngFor="let submenu of menu.submenus">
+                <a
+                  [href]="submenu.externalLink || submenu.routerLink"
+                  class="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                >
+                  <ng-container *ngIf="submenu.matIcon || submenu.icon">
+                    <mat-icon *ngIf="submenu.iconType === 'mat-icon'">{{
+                      submenu.matIcon
+                    }}</mat-icon>
+                    <i
+                      *ngIf="submenu.iconType === 'font-awesome'"
+                      class="fa"
+                      [ngClass]="submenu.icon"
+                    ></i>
+                    <img
+                      *ngIf="submenu.iconType === 'svg'"
+                      [src]="submenu.icon"
+                      alt="icon"
+                      class="w-5 h-5"
+                    />
+                  </ng-container>
+                  <span>{{ submenu.title }}</span>
 
-                  @if (submenu.badge) {
+                  <ng-container *ngIf="submenu.badge">
                     <mat-chip-listbox matListItemMeta>
-                      <mat-chip [ngClass]="submenu.badge.class" selected>
-                        {{ submenu.badge.text }}
-                      </mat-chip>
+                      <mat-chip [ngClass]="submenu.badge.class" selected>{{
+                        submenu.badge.text
+                      }}</mat-chip>
                     </mat-chip-listbox>
-                  }
+                  </ng-container>
                 </a>
-              }
-            </mat-nav-list>
-          </mat-expansion-panel>
-        </div>
-      }
-    }
-  </mat-nav-list>
-</nav>
+              </li>
+            </ul>
+          </details>
+        </ng-container>
+
+        <!-- Divider Type -->
+        <ng-container *ngIf="menu.type === 'divider'">
+          <hr class="my-4 border-t border-gray-200" />
+        </ng-container>
+      </li>
+    </ul>
+  </div>
+</div>

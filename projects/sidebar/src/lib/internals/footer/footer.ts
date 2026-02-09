@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,23 +23,103 @@ import { SidebarNotification, SidebarMessage } from '../../models/sidebar-models
   styleUrls: ['./footer.scss'],
 })
 export class FooterComponent {
-  @Input() notifications: SidebarNotification[] = [];
-  @Input() messages: SidebarMessage[] = [];
   @Input() unreadNotificationsCount = 0;
   @Input() unreadMessagesCount = 0;
-  @Output() notificationClicked = new EventEmitter<any>();
-  @Output() messageClicked = new EventEmitter<any>();
-  @Output() logoutClicked = new EventEmitter<void>();
+  @Input() notifications: SidebarNotification[] = [];
+  @Input() messages: SidebarMessage[] = [];
 
-  onNotificationClick(notification: any) {
-    this.notificationClicked.emit(notification);
+  showNotifications = false;
+  showMessages = false;
+  showSettings = false;
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+    if (this.showNotifications) {
+      this.showMessages = false;
+      this.showSettings = false;
+    }
   }
 
-  onMessageClick(message: any) {
-    this.messageClicked.emit(message);
+  toggleMessages() {
+    this.showMessages = !this.showMessages;
+    if (this.showMessages) {
+      this.showNotifications = false;
+      this.showSettings = false;
+    }
+  }
+
+  toggleSettings() {
+    this.showSettings = !this.showSettings;
+    if (this.showSettings) {
+      this.showNotifications = false;
+      this.showMessages = false;
+    }
+  }
+
+  closeAllDropdowns() {
+    this.showNotifications = false;
+    this.showMessages = false;
+    this.showSettings = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.notification-btn') && !target.closest('.notifications-dropdown')) {
+      this.showNotifications = false;
+    }
+    if (!target.closest('.messages-btn') && !target.closest('.messages-dropdown')) {
+      this.showMessages = false;
+    }
+    if (!target.closest('.settings-btn') && !target.closest('.settings-dropdown')) {
+      this.showSettings = false;
+    }
+  }
+
+  onNotificationClick(notification: SidebarNotification) {
+    console.log('Notification clicked:', notification);
+    // Mark as read, navigate, etc.
+    this.closeAllDropdowns();
+  }
+
+  onMessageClick(message: SidebarMessage) {
+    console.log('Message clicked:', message);
+    // Mark as read, navigate, etc.
+    this.closeAllDropdowns();
+  }
+
+  viewAllNotifications() {
+    console.log('View all notifications');
+    // Navigate to notifications page
+    this.closeAllDropdowns();
+  }
+
+  viewAllMessages() {
+    console.log('View all messages');
+    // Navigate to messages page
+    this.closeAllDropdowns();
+  }
+
+  navigateToProfile() {
+    console.log('Navigate to profile');
+    // Navigate to profile page
+    this.closeAllDropdowns();
+  }
+
+  openHelp() {
+    console.log('Open help');
+    // Open help modal or navigate
+    this.closeAllDropdowns();
+  }
+
+  openSettings() {
+    console.log('Open settings');
+    // Open settings modal or navigate
+    this.closeAllDropdowns();
   }
 
   onLogout() {
-    this.logoutClicked.emit();
+    console.log('Logout');
+    // Implement logout logic
   }
 }

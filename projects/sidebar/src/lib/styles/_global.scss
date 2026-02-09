@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-
+@use '../styles' as *;
 :host {
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 80px;
@@ -42,8 +42,6 @@ $sidebar-header-color-dark: var(--sidebar-header-color, #6c7b88);
   }
 }
 
-
-
 // Main sidebar styles
 .sidebar {
   position: fixed;
@@ -83,8 +81,6 @@ $sidebar-header-color-dark: var(--sidebar-header-color, #6c7b88);
       box-shadow: none !important;
     }
   }
-
-  
 }
 
 // Sidebar Content
@@ -105,8 +101,6 @@ $sidebar-header-color-dark: var(--sidebar-header-color, #6c7b88);
   @include flex-center;
   justify-content: space-between;
   min-height: 64px;
-
-  
 }
 
 // Sidebar Profile
@@ -508,15 +502,9 @@ $sidebar-header-color-dark: var(--sidebar-header-color, #6c7b88);
   }
 }
 
-
-
-
-
 :host {
   display: block;
 }
-
-
 
 .mat-expansion-panel:not(.mat-expanded)
   .mat-expansion-panel-header:not([aria-disabled='true']):hover {
@@ -533,5 +521,3 @@ $sidebar-header-color-dark: var(--sidebar-header-color, #6c7b88);
   align-items: center;
   width: 100%;
 }
-
-

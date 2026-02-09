@@ -68,8 +68,9 @@ export interface SidebarNotification {
   iconColor: string;
   time: string;
   read: boolean;
-  type: 'success' | 'info' | 'warning' | 'error';
+  type?: 'info' | 'success' | 'warning' | 'error' | 'danger' | 'info-alt';
 }
+
 export interface SidebarMessage {
   id: string | number;
   sender: string;
