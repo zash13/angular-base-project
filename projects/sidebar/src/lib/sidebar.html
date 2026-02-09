@@ -4,6 +4,8 @@
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
   />
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
 <nav
   class="sidebar mat-elevation-z4"
@@ -37,12 +39,12 @@
       ></lib-sidebar-header>
 
       <!-- User Profile -->
-      @if (showProfile) {
+      @if (!showProfile) {
         <lib-sidebar-profile [config]="config" [user]="user"></lib-sidebar-profile>
       }
 
       <!-- Search -->
-      @if (showSearch) {
+      @if (!showSearch) {
         <lib-sidebar-search
           [config]="config"
           [searchText]="searchText"

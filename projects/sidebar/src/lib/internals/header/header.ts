@@ -1,17 +1,12 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatRippleModule } from '@angular/material/core';
-import { MatTooltipModule } from '@angular/material/tooltip'; // Add this import
 import { LogoConfig, SidebarConfig } from '../../models/sidebar-models';
 
 @Component({
   selector: 'lib-sidebar-header',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatRippleModule, MatTooltipModule],
+  imports: [CommonModule], // Removed Material modules
   templateUrl: './header.html',
-  styleUrls: ['./header.scss'],
 })
 export class HeaderComponent {
   @Input() config: Partial<SidebarConfig> = {};
