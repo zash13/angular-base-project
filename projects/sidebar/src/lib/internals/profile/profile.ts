@@ -7,13 +7,7 @@ import { UserProfile } from '../../models/sidebar-models';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './profile.html',
-  styles: [
-    `
-      .sidebar-profile {
-        transition: all 0.3s ease;
-      }
-    `,
-  ],
+  styleUrls: ['./profile.scss'],
 })
 export class ProfileComponent {
   @Input() user?: UserProfile;

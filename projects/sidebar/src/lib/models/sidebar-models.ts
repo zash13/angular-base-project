@@ -32,9 +32,7 @@ export interface SidebarConfig {
   theme: 'dark' | 'light' | 'auto';
   rtl: boolean;
   backgroundImage?: string;
-  // New property for footer behavior
   footerCollapsedMode?: 'all' | 'single' | 'none';
-  // Which button to show when collapsed
   collapsedFooterButton?: 'notifications' | 'messages' | 'settings' | 'logout';
 }
 
@@ -44,7 +42,6 @@ export interface LogoConfig {
   icon?: string;
   image?: string;
   iconType?: 'string' | 'mat-icon' | 'image';
-  // For collapsed state
   collapsedIcon?: string;
   collapsedImage?: string;
 }

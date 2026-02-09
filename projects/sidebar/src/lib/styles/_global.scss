@@ -1,5 +1,6 @@
 @use '@angular/material' as mat;
 @use '../styles' as *;
+
 :host {
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 80px;

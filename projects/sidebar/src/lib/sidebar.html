@@ -1,3 +1,4 @@
+<!-- sidebar.html -->
 <head>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <link
@@ -5,56 +6,58 @@
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
   />
 </head>
-
 <nav
   class="sidebar mat-elevation-z4"
   [ngClass]="{
     'sidebar-collapsed': config.collapsed,
     'sidebar-left': config.position === 'left',
+    'sidebar-right': config.position === 'right',
     'sidebar-rtl': config.rtl,
     'sidebar-mobile': isMobile,
     'sidebar-with-backdrop': config.backdrop && isMobile,
     'sidebar-bg': config.backgroundImage,
     'light-theme': config.theme === 'light',
+    'with-top-navbar': true,
   }"
   [style.backgroundImage]="config.backgroundImage ? 'url(' + config.backgroundImage + ')' : null"
   [style.width]="sidebarWidth"
+  [style.top]="'64px'"
+  [style.height]="'calc(100vh - 64px)'"
+  [style.left]="config.position === 'left' ? '0' : 'auto'"
+  [style.right]="config.position === 'right' ? '0' : 'auto'"
 >
   <!-- Backdrop for mobile -->
   @if (config.backdrop && isMobile && !config.collapsed) {
     <div
       class="sidebar-backdrop mat-app-backdrop"
       [style.opacity]="config.backdropOpacity || 0.5"
-      (click)="toggleSidebar()"
+      (click)="requestToggle()"
     ></div>
   }
 
   <div class="sidebar-content">
-    <!-- Fixed Header (non-scrollable) -->
-    <div class="sidebar-header-container">
-      <lib-sidebar-header
-        [config]="config"
-        [logo]="logo"
-        (toggleSidebar)="toggleSidebar()"
-      ></lib-sidebar-header>
-    </div>
+    <!-- Remove the header from sidebar since we have top navbar -->
+    @if (!config.collapsed) {
+      <!-- User Profile (non-scrollable) -->
+      @if (showProfile) {
+        <div class="sidebar-profile-container">
+          <lib-sidebar-profile
+            [user]="user"
+            [collapsed]="config.collapsed ?? false"
+          ></lib-sidebar-profile>
+        </div>
+      }
 
-    <!-- User Profile (non-scrollable) -->
-    @if (!showProfile) {
-      <div class="sidebar-profile-container">
-        <lib-sidebar-profile></lib-sidebar-profile>
-      </div>
-    }
-
-    <!-- Search (non-scrollable) -->
-    @if (!showSearch) {
-      <div class="sidebar-search-container">
-        <lib-sidebar-search
-          [config]="config"
-          [searchText]="searchText"
-          (searchChanged)="onSearch($event)"
-        ></lib-sidebar-search>
-      </div>
+      <!-- Search (non-scrollable) -->
+      @if (!showSearch) {
+        <div class="sidebar-search-container">
+          <lib-sidebar-search
+            [config]="config"
+            [searchText]="searchText"
+            (searchChanged)="onSearch($event)"
+          ></lib-sidebar-search>
+        </div>
+      }
     }
 
     <!-- Scrollable Menu Area -->
@@ -69,14 +72,13 @@
     </div>
   </div>
 
-  <!-- Fixed Footer (non-scrollable) -->
   <div class="sidebar-footer-container">
     <lib-sidebar-footer
       [notifications]="notifications"
       [messages]="messages"
       [unreadNotificationsCount]="unreadNotificationsCount"
       [unreadMessagesCount]="unreadMessagesCount"
-      [config]="config"
+      [config]="getFooterConfig()"
       (logoutClicked)="onLogout()"
     ></lib-sidebar-footer>
   </div>

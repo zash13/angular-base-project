@@ -9,6 +9,9 @@ import { SearchComponent } from './internals/search/search';
 import { MenuComponent as SidebarMenuComponent } from './internals/menu/menu';
 import { FooterComponent } from './internals/footer/footer';
 
+import { SIDEBAR_DATA_SOURCE } from './sidebar-tokens';
+import { SidebarDataSource } from './contracts/sidebar-data-source';
+import { SidebarMaterialModule } from './sidebar-material.module';
 // import interfaces and services
 import {
   MenuItem,
@@ -19,9 +22,6 @@ import {
   SidebarNotification,
 } from './models/sidebar-models';
 
-import { SIDEBAR_DATA_SOURCE } from './sidebar-tokens';
-import { SidebarDataSource } from './contracts/sidebar-data-source';
-import { SidebarMaterialModule } from './sidebar-material.module';
 @Component({
   selector: 'lib-sidebar',
   standalone: true,
@@ -47,6 +47,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
     collapsedWidth: 80,
     collapsed: false,
     animate: true,
+    footerCollapsedMode: 'single',
+    collapsedFooterButton: 'logout',
   };
 
   @Input() user!: UserProfile;
@@ -63,7 +65,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
   @Output() searchChanged = new EventEmitter<string>();
   @Output() notificationClicked = new EventEmitter<SidebarNotification>();
   @Output() messageClicked = new EventEmitter<SidebarMessage>();
+  @Output() sidebarToggleRequested = new EventEmitter<void>();
 
+  requestToggle() {
+    this.sidebarToggleRequested.emit();
+  }
   searchText: string = '';
 
   isMobile = false;
@@ -81,6 +87,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.checkMobile();
     this.loadData();
+    this.config = {
+      footerCollapsedMode: 'all',
+      collapsedFooterButton: 'logout',
+      ...this.config,
+    };
   }
 
   ngOnDestroy() {
@@ -113,6 +124,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // ---------------- UI actions ----------------
 
   toggleSidebar() {
+    console.log('sidebarToggled');
     this.config.collapsed = !this.config.collapsed;
     this.sidebarToggled.emit(this.config.collapsed);
   }
@@ -153,5 +165,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
     return this.config.collapsed
       ? `${this.config.collapsedWidth ?? 80}px`
       : `${this.config.width ?? 260}px`;
+  }
+
+  getFooterConfig() {
+    return {
+      collapsed: this.config?.collapsed ?? false,
+      footerCollapsedMode: this.config?.footerCollapsedMode ?? 'all',
+      collapsedFooterButton: this.config?.collapsedFooterButton ?? 'logout',
+    };
   }
 }
