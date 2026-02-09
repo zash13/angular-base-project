@@ -1,15 +1,12 @@
-@use './styles/global';
+@use './styles/theme';
 
+// Additional component-specific styles that use the theme variables
 .sidebar {
   display: flex;
   flex-direction: column;
-  position: fixed;
-  top: 0;
   z-index: 10;
-  transition: all 0.3s ease;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  height: 100vh;
+  height: 100%;
 
   &.sidebar-left {
     left: 0;
@@ -20,6 +17,7 @@
     right: 0;
     left: auto;
   }
+
   &.with-top-navbar {
     top: 64px;
     height: calc(100vh - 64px);
@@ -51,7 +49,7 @@
 
   .sidebar-footer-container {
     flex-shrink: 0;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--sidebar-border);
   }
 
   &.sidebar-collapsed {
@@ -85,7 +83,7 @@
     }
   }
 }
-// sidebar.scss
+
 // Add tooltips for collapsed state
 .collapsed {
   position: relative;
@@ -133,6 +131,7 @@
       }
     }
   }
+
   &:hover::after {
     content: attr(title);
     position: absolute;
@@ -141,76 +140,12 @@
     transform: translateY(-50%);
     margin-left: 8px;
     padding: 4px 8px;
-    background: #1f2937;
-    color: white;
+    background: var(--sidebar-surface);
+    color: var(--sidebar-text);
     font-size: 12px;
     border-radius: 4px;
     white-space: nowrap;
     z-index: 1000;
     pointer-events: none;
-  }
-}
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-
-  .sidebar-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .sidebar-header-container,
-  .sidebar-profile-container,
-  .sidebar-search-container {
-    flex-shrink: 0;
-    padding: 0.75rem;
-  }
-
-  .sidebar-menu-scroll-container {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-
-    .sidebar-scroll-viewport {
-      height: 100%;
-      width: 100%;
-    }
-  }
-
-  .sidebar-footer-container {
-    flex-shrink: 0;
-    border-top: 1px solid #e5e7eb;
-  }
-
-  &.sidebar-collapsed {
-    .sidebar-menu-scroll-container {
-      .sidebar-scroll-viewport {
-        ::ng-deep {
-          .menu-header,
-          .menu-title,
-          .menu-badge,
-          .dropdown-arrow,
-          .submenu-item {
-            display: none !important;
-          }
-
-          .menu-icon {
-            margin-right: 0 !important;
-          }
-        }
-      }
-    }
   }
 }

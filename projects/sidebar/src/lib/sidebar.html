@@ -16,15 +16,15 @@
     'sidebar-mobile': isMobile,
     'sidebar-with-backdrop': config.backdrop && isMobile,
     'sidebar-bg': config.backgroundImage,
-    'light-theme': config.theme === 'light',
+    'light-theme': currentTheme.background === '#ffffff',
+    'dark-theme': currentTheme.background !== '#ffffff',
     'with-top-navbar': true,
   }"
   [style.backgroundImage]="config.backgroundImage ? 'url(' + config.backgroundImage + ')' : null"
-  [style.width]="sidebarWidth"
-  [style.top]="'64px'"
-  [style.height]="'calc(100vh - 64px)'"
-  [style.left]="config.position === 'left' ? '0' : 'auto'"
-  [style.right]="config.position === 'right' ? '0' : 'auto'"
+  [style.width]="'100%'"
+  [style.height]="'100%'"
+  [attr.data-theme]="currentTheme.background === '#ffffff' ? 'light' : 'dark'"
+  [style]="getThemeCssVariables()"
 >
   <!-- Backdrop for mobile -->
   @if (config.backdrop && isMobile && !config.collapsed) {

@@ -29,7 +29,7 @@ export interface SidebarConfig {
   closeOnClickOutside: boolean;
   animate: boolean;
   animationDuration: number;
-  theme: 'dark' | 'light' | 'auto';
+  theme?: 'dark' | 'light' | 'auto';
   rtl: boolean;
   backgroundImage?: string;
   footerCollapsedMode?: 'all' | 'single' | 'none';
