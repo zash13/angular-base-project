@@ -66,6 +66,7 @@
         <lib-sidebar-menu
           [menus]="menus"
           [config]="config"
+          [direction]="config.position ?? `left`"
           (menuItemClicked)="menuItemClicked.emit($event)"
         ></lib-sidebar-menu>
       </cdk-virtual-scroll-viewport>

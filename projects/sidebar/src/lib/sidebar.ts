@@ -1,4 +1,16 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, Inject, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  Inject,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 
@@ -26,7 +38,7 @@ import {
   SidebarThemeConfig,
   SidebarThemePreset,
   DEFAULT_DARK_THEME,
-  DEFAULT_LIGHT_THEME
+  DEFAULT_LIGHT_THEME,
 } from './models/sidebar-theme';
 
 @Component({
@@ -92,7 +104,7 @@ export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
   unreadMessagesCount = 0;
   constructor(
     @Inject(SIDEBAR_DATA_SOURCE) private _dataSource: SidebarDataSource,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.dataSource = _dataSource;
   }
@@ -209,7 +221,8 @@ export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
       this._currentTheme = this.themeConfig.darkMode ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
     } else if (this.themeConfig?.preset) {
       // Preset-based support
-      this._currentTheme = this.themeConfig.preset === 'light' ? DEFAULT_LIGHT_THEME : DEFAULT_DARK_THEME;
+      this._currentTheme =
+        this.themeConfig.preset === 'light' ? DEFAULT_LIGHT_THEME : DEFAULT_DARK_THEME;
     } else {
       // Default to light theme
       this._currentTheme = DEFAULT_LIGHT_THEME;
@@ -220,7 +233,7 @@ export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
       this._currentTheme = {
         ...this._currentTheme,
         ...this.themeConfig?.customTheme,
-        ...this.customTheme
+        ...this.customTheme,
       };
     }
   }
@@ -235,9 +248,11 @@ export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
       '--sidebar-border': this._currentTheme.border,
       '--sidebar-hover': this._currentTheme.hover,
       '--sidebar-active': this._currentTheme.active,
-      '--sidebar-header-background': this._currentTheme.headerBackground || this._currentTheme.background,
+      '--sidebar-header-background':
+        this._currentTheme.headerBackground || this._currentTheme.background,
       '--sidebar-header-text': this._currentTheme.headerText || this._currentTheme.textSecondary,
-      '--sidebar-profile-background': this._currentTheme.profileBackground || this._currentTheme.surface,
+      '--sidebar-profile-background':
+        this._currentTheme.profileBackground || this._currentTheme.surface,
       '--sidebar-search-background': this._currentTheme.searchBackground || 'transparent',
       '--sidebar-search-border': this._currentTheme.searchBorder || this._currentTheme.border,
       '--sidebar-success': this._currentTheme.success,
@@ -245,7 +260,7 @@ export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
       '--sidebar-error': this._currentTheme.error,
       '--sidebar-info': this._currentTheme.info,
       '--sidebar-shadow-color': this._currentTheme.shadowColor,
-      '--sidebar-transition-duration': this._currentTheme.transitionDuration
+      '--sidebar-transition-duration': this._currentTheme.transitionDuration,
     };
   }
 

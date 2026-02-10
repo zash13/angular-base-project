@@ -101,26 +101,37 @@
             }
           </div>
 
-          <!-- Submenu (only when expanded and not collapsed) -->
           @if (isMenuExpanded(menu) && !config?.collapsed) {
-            <ul class="submenu-list mt-1 space-y-1 pl-4">
+            <ul class="submenu-list mt-2 ml-6 border-l border-gray-700/40">
               @for (submenu of menu.submenus; track submenu.id) {
-                <li class="submenu-item">
+                <li>
                   <a
                     [href]="submenu.externalLink || submenu.routerLink"
-                    class="submenu-link flex items-center rounded-lg px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-100"
                     (click)="onMenuItemClick(submenu)"
+                    class="group flex items-center gap-3 rounded-md px-4 py-2 text-sm text-gray-400 hover:bg-white/5 hover:text-gray-200"
                   >
-                    @if (submenu.icon && !config?.collapsed) {
-                      <span class="submenu-icon mr-3 text-gray-400">
+                    <!-- Bullet (fixed column) -->
+                    <span
+                      class="flex h-2 w-2 shrink-0 items-center justify-center rounded-full bg-gray-500 group-hover:bg-gray-300"
+                    ></span>
+
+                    <!-- Icon (fixed column) -->
+                    <span class="flex h-4 w-4 shrink-0 items-center justify-center text-gray-400">
+                      @if (submenu.icon) {
                         @if (submenu.iconType === 'mat-icon') {
-                          <span class="material-icons text-sm">{{ submenu.icon }}</span>
+                          <span class="material-icons text-[16px] leading-none">
+                            {{ submenu.icon }}
+                          </span>
                         } @else {
-                          <i class="fa {{ submenu.icon }} text-sm"></i>
+                          <i class="fa {{ submenu.icon }} text-xs leading-none"></i>
                         }
-                      </span>
-                    }
-                    <span>{{ submenu.title }}</span>
+                      }
+                    </span>
+
+                    <!-- Title (flex column) -->
+                    <span class="flex-1 leading-none">
+                      {{ submenu.title }}
+                    </span>
                   </a>
                 </li>
               }

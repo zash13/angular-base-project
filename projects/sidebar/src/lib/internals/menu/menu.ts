@@ -25,13 +25,13 @@ import { MenuItem, SidebarConfig } from '../../models/sidebar-models';
 export class MenuComponent {
   @Input() menus: MenuItem[] = [];
   @Input() config: Partial<SidebarConfig> = {};
+  @Input() direction: 'left' | 'right' = 'left';
   @Output() menuItemClicked = new EventEmitter<MenuItem>();
 
   expandedMenuIds = new Set<string>();
 
   toggleMenu(menu: MenuItem) {
-    if (this.config.collapsed) return; // Don't expand when collapsed
-
+    if (this.config.collapsed) return;
     if (menu.type === 'dropdown') {
       if (this.expandedMenuIds.has(menu.id)) {
         this.expandedMenuIds.delete(menu.id);
@@ -47,5 +47,21 @@ export class MenuComponent {
 
   isMenuExpanded(menu: MenuItem): boolean {
     return menu.type === 'dropdown' ? this.expandedMenuIds.has(menu.id) : false;
+  }
+
+  // helper to determine flex direction for menu links
+  getFlexDirection(): string {
+    return this.direction === 'right' ? 'flex-row-reverse' : 'flex-row';
+  }
+
+  // helper to determine margin for title
+  getTitleMargin(): string {
+    return this.direction === 'right' ? 'mr-3' : 'ml-3';
+  }
+
+  // helper to determine margin for badges
+  getBadgeMargin(): string {
+    return this.direction === 'right' ? 'ml-auto' : 'ml-auto';
+    // ml-auto works for both ends in flex-row/flex-row-reverse
   }
 }

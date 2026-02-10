@@ -1,63 +1,61 @@
 <nav class="top-navbar fixed w-full z-10 border-b border-gray-200 shadow-sm">
   <div
-    class="mx-44 my-2 flex justify-between items-center"
+    class="flex items-center justify-between my-2"
     [class.flex-row-reverse]="sidebarPosition === 'left'"
   >
-    <div class="flex items-center">
-      <a [href]="logo?.url || '#'" class="flex items-center gap-2 no-underline">
-        @if (logo?.image) {
-          <img [src]="logo?.image" [alt]="logo?.text || 'Logo'" class="h-8 w-auto" />
-        } @else if (logo?.icon && logo?.iconType === 'mat-icon') {
-          <span class="material-icons text-2xl text-gray-800">
-            {{ logo?.icon }}
-          </span>
-        }
-        <span class="text-xl font-semibold text-gray-900">
-          {{ logo?.text || 'Application' }}
+    <a
+      [href]="logo?.url || '#'"
+      class="flex items-center gap-2 no-underline"
+      style="margin-inline-start: 100px"
+    >
+      @if (logo?.image) {
+        <img [src]="logo?.image" [alt]="logo?.text || 'Logo'" class="h-8 w-auto" />
+      } @else if (logo?.icon && logo?.iconType === 'mat-icon') {
+        <span class="material-icons text-2xl text-gray-800">
+          {{ logo?.icon }}
         </span>
-      </a>
-    </div>
+      }
+      <span class="text-xl font-semibold text-gray-900">
+        {{ logo?.text || 'Application' }}
+      </span>
+    </a>
 
-    <!-- Sidebar toggle -->
-    <div class="flex items-center gap-2.5">
-      <!-- Optional: Add other elements here that should be in the same row as the button -->
+    <button
+      type="button"
+      (click)="toggle()"
+      class="inline-flex items-center justify-center w-10 h-10 p-2 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+      style="margin-inline-end: 20px"
+      [attr.aria-expanded]="!sidebarCollapsed"
+      [attr.title]="sidebarCollapsed ? 'Open sidebar' : 'Close sidebar'"
+    >
+      <span class="sr-only">
+        {{ sidebarCollapsed ? 'Open sidebar' : 'Close sidebar' }}
+      </span>
 
-      <button
-        type="button"
-        (click)="toggle()"
-        class="inline-flex items-center justify-center w-10 h-10 p-2 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 mx-2.5"
-        [attr.aria-expanded]="!sidebarCollapsed"
-        [attr.title]="sidebarCollapsed ? 'Open sidebar' : 'Close sidebar'"
+      <svg
+        class="w-6 h-6"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
       >
-        <span class="sr-only">
-          {{ sidebarCollapsed ? 'Open sidebar' : 'Close sidebar' }}
-        </span>
-
-        <svg
-          class="w-6 h-6"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          @if (!sidebarCollapsed) {
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          } @else {
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-width="2"
-              d="M5 7h14M5 12h14M5 17h14"
-            />
-          }
-        </svg>
-      </button>
-    </div>
+        @if (!sidebarCollapsed) {
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        } @else {
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-width="2"
+            d="M5 7h14M5 12h14M5 17h14"
+          />
+        }
+      </svg>
+    </button>
   </div>
 </nav>
