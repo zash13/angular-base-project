@@ -1,107 +1,180 @@
-<nav class="sidebar-menu">
-  <mat-nav-list>
-    @for (menu of menus; track trackByMenuItemId($index, menu)) {
-      @if (menu.type === 'header') {
-        <div class="menu-header mat-subtitle-2">
-          {{ menu.title }}
-        </div>
-      }
-
-      @if (menu.type === 'link') {
-        <a
-          mat-list-item
-          [href]="menu.externalLink"
-          [target]="menu.externalLink ? '_blank' : '_self'"
-          [ngClass]="{ active: menu.active }"
-          matRipple
-          [matTooltip]="config.collapsed ? menu.title : null"
-          [matTooltipPosition]="'right'"
+<div class="sidebar-menu" [attr.dir]="isRtl ? 'rtl' : 'ltr'">
+  <ul class="menu-list space-y-1">
+    @for (menu of menus; track menu.id) {
+      <!-- HEADER -->
+      @if (menu.type === 'header' && !config?.collapsed) {
+        <li
+          class="menu-header px-4 py-2 text-xs font-semibold uppercase text-gray-500"
+          [ngClass]="isRtl ? 'text-right' : 'text-left'"
         >
-          @if (menu.matIcon || menu.icon) {
-            <mat-icon matListItemIcon>{{ menu.matIcon || menu.icon }}</mat-icon>
-          }
-
-          @if (!config.collapsed) {
-            <span matListItemTitle>{{ menu.title }}</span>
-          }
-
-          @if (menu.badge && !config.collapsed) {
-            <mat-chip-listbox matListItemMeta>
-              <mat-chip [ngClass]="menu.badge.class" selected>
-                {{ menu.badge.text }}
-              </mat-chip>
-            </mat-chip-listbox>
-          }
-        </a>
+          {{ menu.title }}
+        </li>
       }
 
-      <!-- Dropdown Menu -->
-      @if (menu.type === 'dropdown') {
-        <div>
-          <mat-expansion-panel
-            class="menu-dropdown"
-            [expanded]="isMenuExpanded(menu)"
-            (expandedChange)="toggleMenu(menu)"
-            hideToggle
-            [matTooltip]="config.collapsed ? menu.title : null"
-            [matTooltipPosition]="'right'"
+      <!-- LINK -->
+      @if (menu.type === 'link') {
+        <li class="menu-item">
+          <a
+            [href]="menu.externalLink || menu.routerLink"
+            [target]="menu.externalLink ? '_blank' : '_self'"
+            class="menu-link flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100"
+            [ngClass]="{
+              active: menu.active,
+              collapsed: config?.collapsed,
+              'flex-row-reverse text-right': isRtl,
+            }"
+            (click)="onMenuItemClick(menu)"
           >
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                @if (menu.matIcon || menu.icon) {
-                  <mat-icon>{{ menu.matIcon || menu.icon }}</mat-icon>
+            <!-- ICON -->
+            <div class="menu-icon flex-shrink-0" [ngClass]="isRtl ? 'order-last' : 'order-first'">
+              @if (menu.icon) {
+                @if (menu.iconType === 'mat-icon') {
+                  <span class="material-icons text-gray-600">
+                    {{ menu.icon }}
+                  </span>
+                } @else if (menu.iconType === 'font-awesome') {
+                  <i class="fa {{ menu.icon }} text-gray-600"></i>
+                } @else {
+                  <img [src]="menu.icon" class="h-5 w-5" />
                 }
-
-                @if (!config.collapsed) {
-                  <span>{{ menu.title }}</span>
-                }
-              </mat-panel-title>
-
-              <div class="panel-actions">
-                @if (menu.badge && !config.collapsed) {
-                  <mat-chip-listbox>
-                    <mat-chip [ngClass]="menu.badge.class" selected>
-                      {{ menu.badge.text }}
-                    </mat-chip>
-                  </mat-chip-listbox>
-                }
-
-                @if (!config.collapsed) {
-                  <mat-icon class="dropdown-icon">
-                    {{ isMenuExpanded(menu) ? 'expand_less' : 'expand_more' }}
-                  </mat-icon>
-                }
-              </div>
-            </mat-expansion-panel-header>
-
-            <!-- Submenu -->
-            <mat-nav-list>
-              @for (submenu of menu.submenus; track submenu) {
-                <a
-                  mat-list-item
-                  [href]="submenu.externalLink"
-                  (click)="menuItemClicked.emit(submenu)"
-                  matRipple
-                >
-                  @if (submenu.matIcon || submenu.icon) {
-                    <mat-icon matListItemIcon>{{ submenu.matIcon || submenu.icon }}</mat-icon>
-                  }
-
-                  <span matListItemTitle>{{ submenu.title }}</span>
-
-                  @if (submenu.badge) {
-                    <mat-chip-listbox matListItemMeta>
-                      <mat-chip [ngClass]="submenu.badge.class" selected>
-                        {{ submenu.badge.text }}
-                      </mat-chip>
-                    </mat-chip-listbox>
-                  }
-                </a>
               }
-            </mat-nav-list>
-          </mat-expansion-panel>
-        </div>
+            </div>
+
+            <!-- TITLE -->
+            @if (!config?.collapsed) {
+              <span
+                class="menu-title flex-1 text-sm font-medium"
+                [ngClass]="isRtl ? 'me-3' : 'ms-3'"
+              >
+                {{ menu.title }}
+              </span>
+            }
+
+            <!-- BADGE -->
+            @if (menu.badge && !config?.collapsed) {
+              <span
+                class="menu-badge rounded-full px-2 py-0.5 text-xs font-medium"
+                [ngClass]="[
+                  isRtl ? 'mr-auto' : 'ml-auto',
+                  menu.badge.class === 'badge-danger' && 'bg-red-100 text-red-800',
+                  menu.badge.class === 'badge-success' && 'bg-green-100 text-green-800',
+                  menu.badge.class === 'badge-warning' && 'bg-yellow-100 text-yellow-800',
+                  (menu.badge.class === 'badge-info' || menu.badge.class === 'badge-primary') &&
+                    'bg-blue-100 text-blue-800',
+                ]"
+              >
+                {{ menu.badge.text }}
+              </span>
+            }
+          </a>
+        </li>
+      }
+
+      <!-- DROPDOWN -->
+      @if (menu.type === 'dropdown') {
+        <li class="dropdown-item">
+          <div
+            class="dropdown-toggle flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100 cursor-pointer"
+            [ngClass]="{
+              collapsed: config?.collapsed,
+              'flex-row-reverse text-right': isRtl,
+            }"
+            (click)="toggleMenu(menu)"
+          >
+            <!-- ICON -->
+            <div class="menu-icon flex-shrink-0" [ngClass]="isRtl ? 'order-last' : 'order-first'">
+              @if (menu.icon) {
+                @if (menu.iconType === 'mat-icon') {
+                  <span class="material-icons text-gray-600">
+                    {{ menu.icon }}
+                  </span>
+                } @else {
+                  <i class="fa {{ menu.icon }} text-gray-600"></i>
+                }
+              }
+            </div>
+
+            <!-- TITLE -->
+            @if (!config?.collapsed) {
+              <span
+                class="menu-title flex-1 text-sm font-medium"
+                [ngClass]="isRtl ? 'me-3' : 'ms-3'"
+              >
+                {{ menu.title }}
+              </span>
+
+              <!-- ARROW -->
+              <span
+                class="dropdown-arrow transition-transform"
+                [ngClass]="{
+                  'order-last': !isRtl,
+                  'order-first': isRtl,
+                  'ml-auto': !isRtl,
+                  'mr-auto': isRtl,
+                  'rotate-180': isMenuExpanded(menu),
+                  'scale-x-[-1]': isRtl,
+                }"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </span>
+            }
+          </div>
+
+          <!-- SUBMENU -->
+          @if (isMenuExpanded(menu) && !config?.collapsed) {
+            <ul
+              class="submenu-list mt-2 border-gray-700/40"
+              [ngClass]="isRtl ? 'mr-6 border-r' : 'ml-6 border-l'"
+            >
+              @for (submenu of menu.submenus; track submenu.id) {
+                <li>
+                  <a
+                    class="group flex items-center gap-3 rounded-md px-4 py-2 text-sm text-gray-400 hover:bg-white/5 hover:text-gray-200"
+                    [ngClass]="isRtl ? 'flex-row-reverse text-right' : 'text-left'"
+                    (click)="onMenuItemClick(submenu)"
+                  >
+                    <!-- BULLET -->
+                    <span
+                      class="flex h-2 w-2 shrink-0 rounded-full bg-gray-500 group-hover:bg-gray-300"
+                      [ngClass]="isRtl ? 'order-last' : 'order-first'"
+                    ></span>
+
+                    <!-- ICON -->
+                    <span
+                      class="flex h-4 w-4 shrink-0 items-center justify-center"
+                      [ngClass]="isRtl ? 'order-last' : 'order-first'"
+                    >
+                      @if (submenu.icon) {
+                        <i class="fa {{ submenu.icon }} text-xs"></i>
+                      }
+                    </span>
+
+                    <!-- TITLE -->
+                    <span
+                      class="flex-1"
+                      [ngClass]="isRtl ? 'order-2 text-right' : 'order-2 text-left'"
+                    >
+                      {{ submenu.title }}
+                    </span>
+                  </a>
+                </li>
+              }
+            </ul>
+          }
+        </li>
+      }
+
+      <!-- DIVIDER -->
+      @if (menu.type === 'divider' && !config?.collapsed) {
+        <li class="menu-divider my-2 border-t border-gray-200"></li>
       }
     }
-  </mat-nav-list>
-</nav>
+  </ul>
+</div>

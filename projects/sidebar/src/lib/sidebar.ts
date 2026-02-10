@@ -1,4 +1,16 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, Inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  Inject,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 
@@ -9,6 +21,9 @@ import { SearchComponent } from './internals/search/search';
 import { MenuComponent as SidebarMenuComponent } from './internals/menu/menu';
 import { FooterComponent } from './internals/footer/footer';
 
+import { SIDEBAR_DATA_SOURCE } from './sidebar-tokens';
+import { SidebarDataSource } from './contracts/sidebar-data-source';
+import { SidebarMaterialModule } from './sidebar-material.module';
 // import interfaces and services
 import {
   MenuItem,
@@ -18,10 +33,14 @@ import {
   SidebarMessage,
   SidebarNotification,
 } from './models/sidebar-models';
+import {
+  SidebarTheme,
+  SidebarThemeConfig,
+  SidebarThemePreset,
+  DEFAULT_DARK_THEME,
+  DEFAULT_LIGHT_THEME,
+} from './models/sidebar-theme';
 
-import { SIDEBAR_DATA_SOURCE } from './sidebar-tokens';
-import { SidebarDataSource } from './contracts/sidebar-data-source';
-import { SidebarMaterialModule } from './sidebar-material.module';
 @Component({
   selector: 'lib-sidebar',
   standalone: true,
@@ -36,8 +55,9 @@ import { SidebarMaterialModule } from './sidebar-material.module';
   ],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidebarComponent implements OnInit, OnDestroy {
+export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
   private subscriptions = new Subscription();
   private dataSource: SidebarDataSource;
 
@@ -47,7 +67,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
     collapsedWidth: 80,
     collapsed: false,
     animate: true,
+    footerCollapsedMode: 'single',
+    collapsedFooterButton: 'logout',
   };
+
+  @Input() themeConfig: SidebarThemeConfig = { preset: 'light' };
+  @Input() darkMode?: boolean; // Legacy boolean support
+  @Input() customTheme?: Partial<SidebarTheme>;
 
   @Input() user!: UserProfile;
   @Input() logo!: LogoConfig;
@@ -63,7 +89,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
   @Output() searchChanged = new EventEmitter<string>();
   @Output() notificationClicked = new EventEmitter<SidebarNotification>();
   @Output() messageClicked = new EventEmitter<SidebarMessage>();
+  @Output() sidebarToggleRequested = new EventEmitter<void>();
 
+  requestToggle() {
+    this.sidebarToggleRequested.emit();
+  }
   searchText: string = '';
 
   isMobile = false;
@@ -72,7 +102,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   unreadNotificationsCount = 0;
   unreadMessagesCount = 0;
-  constructor(@Inject(SIDEBAR_DATA_SOURCE) private _dataSource: SidebarDataSource) {
+  constructor(
+    @Inject(SIDEBAR_DATA_SOURCE) private _dataSource: SidebarDataSource,
+    private cdr: ChangeDetectorRef,
+  ) {
     this.dataSource = _dataSource;
   }
 
@@ -81,6 +114,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.checkMobile();
     this.loadData();
+    this.config = {
+      footerCollapsedMode: 'all',
+      collapsedFooterButton: 'logout',
+      ...this.config,
+    };
+    this.applyTheme();
   }
 
   ngOnDestroy() {
@@ -113,6 +152,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // ---------------- UI actions ----------------
 
   toggleSidebar() {
+    console.log('sidebarToggled');
     this.config.collapsed = !this.config.collapsed;
     this.sidebarToggled.emit(this.config.collapsed);
   }
@@ -153,5 +193,89 @@ export class SidebarComponent implements OnInit, OnDestroy {
     return this.config.collapsed
       ? `${this.config.collapsedWidth ?? 80}px`
       : `${this.config.width ?? 260}px`;
+  }
+
+  getFooterConfig() {
+    return {
+      collapsed: this.config?.collapsed ?? false,
+      footerCollapsedMode: this.config?.footerCollapsedMode ?? 'all',
+      collapsedFooterButton: this.config?.collapsedFooterButton ?? 'logout',
+      rtl: this.config?.rtl ?? false,
+      position: this.config?.position ?? 'left',
+    };
+  }
+
+  // ---------------- Theme Management ----------------
+
+  private _currentTheme: SidebarTheme = DEFAULT_LIGHT_THEME;
+
+  get currentTheme(): SidebarTheme {
+    return this._currentTheme;
+  }
+
+  private applyTheme() {
+    // Determine which theme to use
+    if (this.darkMode !== undefined) {
+      // Legacy boolean support
+      this._currentTheme = this.darkMode ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
+    } else if (this.themeConfig?.darkMode !== undefined) {
+      // Config-based boolean support
+      this._currentTheme = this.themeConfig.darkMode ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
+    } else if (this.themeConfig?.preset) {
+      // Preset-based support
+      this._currentTheme =
+        this.themeConfig.preset === 'light' ? DEFAULT_LIGHT_THEME : DEFAULT_DARK_THEME;
+    } else {
+      // Default to light theme
+      this._currentTheme = DEFAULT_LIGHT_THEME;
+    }
+
+    // Apply custom theme overrides if provided
+    if (this.themeConfig?.customTheme || this.customTheme) {
+      this._currentTheme = {
+        ...this._currentTheme,
+        ...this.themeConfig?.customTheme,
+        ...this.customTheme,
+      };
+    }
+  }
+
+  getThemeCssVariables(): { [key: string]: string } {
+    return {
+      '--sidebar-background': this._currentTheme.background,
+      '--sidebar-surface': this._currentTheme.surface,
+      '--sidebar-primary': this._currentTheme.primary,
+      '--sidebar-text': this._currentTheme.text,
+      '--sidebar-text-secondary': this._currentTheme.textSecondary,
+      '--sidebar-border': this._currentTheme.border,
+      '--sidebar-hover': this._currentTheme.hover,
+      '--sidebar-active': this._currentTheme.active,
+      '--sidebar-header-background':
+        this._currentTheme.headerBackground || this._currentTheme.background,
+      '--sidebar-header-text': this._currentTheme.headerText || this._currentTheme.textSecondary,
+      '--sidebar-profile-background':
+        this._currentTheme.profileBackground || this._currentTheme.surface,
+      '--sidebar-search-background': this._currentTheme.searchBackground || 'transparent',
+      '--sidebar-search-border': this._currentTheme.searchBorder || this._currentTheme.border,
+      '--sidebar-success': this._currentTheme.success,
+      '--sidebar-warning': this._currentTheme.warning,
+      '--sidebar-error': this._currentTheme.error,
+      '--sidebar-info': this._currentTheme.info,
+      '--sidebar-shadow-color': this._currentTheme.shadowColor,
+      '--sidebar-transition-duration': this._currentTheme.transitionDuration,
+    };
+  }
+
+  // Update theme dynamically
+  updateTheme(themeConfig: Partial<SidebarThemeConfig>) {
+    this.themeConfig = { ...this.themeConfig, ...themeConfig };
+    this.applyTheme();
+    this.cdr.markForCheck();
+  }
+
+  // Trigger change detection when theme inputs change
+  ngOnChanges() {
+    this.applyTheme();
+    this.cdr.markForCheck();
   }
 }

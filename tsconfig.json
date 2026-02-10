@@ -12,6 +12,9 @@
     "isolatedModules": true,
     "experimentalDecorators": true,
     "paths": {
+      "navbar": [
+        "./dist/navbar"
+      ],
       "side": [
         "./dist/side"
       ],
@@ -51,6 +54,12 @@
     },
     {
       "path": "./projects/sidebar/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/navbar/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/navbar/tsconfig.spec.json"
     }
   ]
 }

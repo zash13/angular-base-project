@@ -1,1 +1,45 @@
-@use '../../styles/global' as global;
+@use '../../styles/theme' as theme;
+
+.header {
+  padding: 16px;
+  border-bottom: 1px solid var(--sidebar-border);
+  background-color: var(--sidebar-header-background);
+  color: var(--sidebar-header-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  transition: all var(--sidebar-transition-duration) ease;
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .logo-icon, .logo-image {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--sidebar-text);
+    }
+  }
+
+  .toggle-button {
+    background: none;
+    border: none;
+    color: var(--sidebar-text);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all var(--sidebar-transition-duration) ease;
+
+    &:hover {
+      background-color: var(--sidebar-hover);
+    }
+  }
+}

@@ -1,40 +1,79 @@
 <header class="sidebar-header">
-  <div class="header-content" [class.collapsed]="config?.collapsed">
+  <div
+    class="header-content flex items-center justify-between px-4 py-4"
+    [class.collapsed]="config?.collapsed"
+  >
     @if (logo) {
-      <div class="logo-section">
-        @if ((logo.matIcon || logo.icon) && !config?.collapsed) {
-          <mat-icon class="logo-icon">
-            {{ logo.matIcon || logo.icon }}
-          </mat-icon>
-        }
-
-        @if (logo.image && !config?.collapsed) {
-          <img [src]="logo.image" [alt]="logo.text" class="logo-image" />
-        }
-
+      <div class="logo-section flex items-center gap-3">
+        <!-- Expanded State -->
         @if (!config?.collapsed) {
+          @if (logo.image) {
+            <img [src]="logo.image" [alt]="logo.text" class="logo-image h-8 w-auto" />
+          } @else if (logo.icon) {
+            @if (logo.iconType === 'mat-icon') {
+              <span class="logo-icon material-icons text-gray-700">
+                {{ logo.icon }}
+              </span>
+            } @else {
+              <span class="logo-icon text-2xl">
+                {{ logo.icon }}
+              </span>
+            }
+          }
+
           <div class="logo-text">
             @if (logo.url) {
               <a [href]="logo.url" class="logo-link">
-                <h2 class="logo-title">{{ logo.text || 'Pro Sidebar' }}</h2>
+                <h2 class="logo-title text-lg font-semibold text-gray-800">
+                  {{ logo.text || 'Pro Sidebar' }}
+                </h2>
               </a>
             } @else {
-              <h2 class="logo-title">{{ logo.text || 'Pro Sidebar' }}</h2>
+              <h2 class="logo-title text-lg font-semibold text-gray-800">
+                {{ logo.text || 'Pro Sidebar' }}
+              </h2>
             }
           </div>
+        }
+        <!-- Collapsed State -->
+        @else {
+          @if (logo.collapsedImage) {
+            <img
+              [src]="logo.collapsedImage"
+              [alt]="logo.text"
+              class="logo-collapsed-image h-6 w-6"
+            />
+          } @else if (logo.collapsedIcon) {
+            <span class="logo-collapsed-icon material-icons text-gray-700">
+              {{ logo.collapsedIcon }}
+            </span>
+          } @else if (logo.icon) {
+            @if (logo.iconType === 'mat-icon') {
+              <span class="logo-collapsed-icon material-icons text-gray-700">
+                {{ logo.icon }}
+              </span>
+            } @else {
+              <span class="logo-collapsed-icon text-xl">
+                {{ logo.icon }}
+              </span>
+            }
+          }
         }
       </div>
     }
 
     <!-- Toggle Button -->
     <button
-      mat-icon-button
-      class="toggle-button"
+      type="button"
+      class="toggle-button flex h-8 w-8 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900"
       (click)="toggleSidebar.emit()"
-      [matTooltip]="config?.collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
-      matTooltipPosition="right"
+      title="{{ config?.collapsed ? 'Expand sidebar' : 'Collapse sidebar' }}"
     >
-      <mat-icon>{{ config?.collapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      @if (config?.collapsed) {
+        <span class="material-icons text-lg">chevron_right</span>
+      } @else {
+        <span class="material-icons text-lg">chevron_left</span>
+      }
     </button>
   </div>
 </header>

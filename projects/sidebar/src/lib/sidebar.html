@@ -1,3 +1,4 @@
+<!-- sidebar.html -->
 <head>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <link
@@ -9,64 +10,78 @@
   class="sidebar mat-elevation-z4"
   [ngClass]="{
     'sidebar-collapsed': config.collapsed,
-    'sidebar-': config.position === 'left',
-    'sidebar-rtl': config.rtl,
+    'sidebar-left': config.position === 'left',
+    'sidebar-right': config.position === 'right',
+    'sidebar-rtl': config.rtl || config.position === 'right',
     'sidebar-mobile': isMobile,
     'sidebar-with-backdrop': config.backdrop && isMobile,
     'sidebar-bg': config.backgroundImage,
-    'light-theme': config.theme === 'light',
+    'light-theme': currentTheme.background === '#ffffff',
+    'dark-theme': currentTheme.background !== '#ffffff',
+    'with-top-navbar': true,
   }"
   [style.backgroundImage]="config.backgroundImage ? 'url(' + config.backgroundImage + ')' : null"
+  [style.width]="'100%'"
+  [style.height]="'100%'"
+  [attr.data-theme]="currentTheme.background === '#ffffff' ? 'light' : 'dark'"
+  [attr.dir]="(config.rtl || config.position === 'right') ? 'rtl' : 'ltr'"
+  [style]="getThemeCssVariables()"
 >
   <!-- Backdrop for mobile -->
   @if (config.backdrop && isMobile && !config.collapsed) {
     <div
       class="sidebar-backdrop mat-app-backdrop"
       [style.opacity]="config.backdropOpacity || 0.5"
-      (click)="toggleSidebar()"
+      (click)="requestToggle()"
     ></div>
   }
 
   <div class="sidebar-content">
-    <cdk-virtual-scroll-viewport itemSize="48" class="sidebar-scroll-viewport">
-      <!-- Sidebar Header -->
-      <lib-sidebar-header
-        [config]="config"
-        [logo]="logo"
-        (toggleSidebar)="toggleSidebar()"
-      ></lib-sidebar-header>
-
-      <!-- User Profile -->
+    <!-- Remove the header from sidebar since we have top navbar -->
+    @if (!config.collapsed) {
+      <!-- User Profile (non-scrollable) -->
       @if (showProfile) {
-        <lib-sidebar-profile [config]="config" [user]="user"></lib-sidebar-profile>
+        <div class="sidebar-profile-container">
+          <lib-sidebar-profile
+            [user]="user"
+            [collapsed]="config.collapsed ?? false"
+          ></lib-sidebar-profile>
+        </div>
       }
 
-      <!-- Search -->
-      @if (showSearch) {
-        <lib-sidebar-search
+      <!-- Search (non-scrollable) -->
+      @if (!showSearch) {
+        <div class="sidebar-search-container">
+          <lib-sidebar-search
+            [config]="config"
+            [searchText]="searchText"
+            (searchChanged)="onSearch($event)"
+          ></lib-sidebar-search>
+        </div>
+      }
+    }
+
+    <!-- Scrollable Menu Area -->
+    <div class="sidebar-menu-scroll-container">
+      <cdk-virtual-scroll-viewport itemSize="48" class="sidebar-scroll-viewport">
+        <lib-sidebar-menu
+          [menus]="menus"
           [config]="config"
-          [searchText]="searchText"
-          (searchChanged)="onSearch($event)"
-        ></lib-sidebar-search>
-      }
-
-      <!-- Menu -->
-      <lib-sidebar-menu
-        [menus]="menus"
-        [config]="config"
-        (menuItemClicked)="menuItemClicked.emit($event)"
-      ></lib-sidebar-menu>
-    </cdk-virtual-scroll-viewport>
+          [direction]="config.position ?? `left`"
+          (menuItemClicked)="menuItemClicked.emit($event)"
+        ></lib-sidebar-menu>
+      </cdk-virtual-scroll-viewport>
+    </div>
   </div>
 
-  <!-- Sidebar Footer -->
-  <lib-sidebar-footer
-    [notifications]="notifications"
-    [messages]="messages"
-    [unreadNotificationsCount]="unreadNotificationsCount"
-    [unreadMessagesCount]="unreadMessagesCount"
-    (notificationClicked)="onNotificationClick($event)"
-    (messageClicked)="onMessageClick($event)"
-    (logoutClicked)="onLogout()"
-  ></lib-sidebar-footer>
+  <div class="sidebar-footer-container">
+    <lib-sidebar-footer
+      [notifications]="notifications"
+      [messages]="messages"
+      [unreadNotificationsCount]="unreadNotificationsCount"
+      [unreadMessagesCount]="unreadMessagesCount"
+      [config]="getFooterConfig()"
+      (logoutClicked)="onLogout()"
+    ></lib-sidebar-footer>
+  </div>
 </nav>

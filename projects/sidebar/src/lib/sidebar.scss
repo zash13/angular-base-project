@@ -1,1 +1,185 @@
-@use './styles/global';
+@use './styles/theme';
+
+// Additional component-specific styles that use the theme variables
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  overflow: hidden;
+  height: 100%;
+
+  &.sidebar-left {
+    left: 0;
+    right: auto;
+  }
+
+  &.sidebar-right {
+    right: 0;
+    left: auto;
+  }
+  
+  // RTL theme support
+  &.sidebar-rtl {
+    direction: rtl;
+    
+    .sidebar-footer-container {
+      .footer-actions {
+        direction: rtl;
+      }
+    }
+  }
+
+  &.with-top-navbar {
+    top: 64px;
+    height: calc(100vh - 64px);
+  }
+
+  .sidebar-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    
+    // Ensure theme variables are inherited
+    &, & * {
+      background-color: inherit;
+      color: inherit;
+    }
+  }
+
+  .sidebar-profile-container,
+  .sidebar-search-container {
+    flex-shrink: 0;
+    padding: 0.75rem;
+    
+    // Ensure theme variables are inherited by child components
+    & ::ng-deep lib-sidebar-profile,
+    & ::ng-deep lib-sidebar-search {
+      &, & * {
+        background-color: inherit;
+        color: inherit;
+      }
+    }
+  }
+
+  .sidebar-menu-scroll-container {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+
+    .sidebar-scroll-viewport {
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  .sidebar-footer-container {
+    flex-shrink: 0;
+    border-top: 1px solid var(--sidebar-border);
+    
+    // Ensure theme variables are inherited by footer component
+    & ::ng-deep lib-sidebar-footer {
+      &, & * {
+        background-color: inherit;
+        color: inherit;
+      }
+    }
+  }
+
+  &.sidebar-collapsed {
+    .sidebar-menu-scroll-container {
+      .sidebar-scroll-viewport {
+        ::ng-deep {
+          .menu-header,
+          .menu-title,
+          .menu-badge,
+          .dropdown-arrow,
+          .submenu-item {
+            display: none !important;
+          }
+
+          .menu-icon {
+            margin: 0 auto !important;
+          }
+
+          .menu-link,
+          .dropdown-toggle {
+            justify-content: center !important;
+            padding: 0.75rem !important;
+          }
+        }
+      }
+    }
+
+    .sidebar-profile-container,
+    .sidebar-search-container {
+      display: none !important;
+    }
+  }
+}
+
+// Add tooltips for collapsed state
+.collapsed {
+  position: relative;
+
+  &.sidebar-collapsed {
+    .sidebar-content {
+      .sidebar-header-container,
+      .sidebar-profile-container,
+      .sidebar-search-container {
+        padding: 0.5rem;
+      }
+    }
+
+    .sidebar-menu-scroll-container {
+      ::ng-deep {
+        .menu-header,
+        .menu-title,
+        .menu-badge,
+        .dropdown-arrow,
+        .submenu-item,
+        .submenu-list {
+          display: none !important;
+        }
+
+        .menu-icon {
+          margin: 0 auto !important;
+        }
+
+        .menu-link,
+        .dropdown-toggle {
+          justify-content: center !important;
+          padding: 0.75rem !important;
+        }
+      }
+    }
+
+    .sidebar-footer-container {
+      .footer-actions {
+        justify-content: center !important;
+        gap: 0.5rem !important;
+
+        & > div {
+          margin: 0 !important;
+        }
+      }
+    }
+  }
+
+  &:hover::after {
+    content: attr(title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 8px;
+    padding: 4px 8px;
+    background: var(--sidebar-surface);
+    color: var(--sidebar-text);
+    font-size: 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+  }
+}
