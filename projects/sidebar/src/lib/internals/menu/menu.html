@@ -1,56 +1,67 @@
-<div class="sidebar-menu">
+<div class="sidebar-menu" [attr.dir]="isRtl ? 'rtl' : 'ltr'">
   <ul class="menu-list space-y-1">
-    <!-- Dynamic Loop for Menu Items -->
     @for (menu of menus; track menu.id) {
-      <!-- Header Type -->
+      <!-- HEADER -->
       @if (menu.type === 'header' && !config?.collapsed) {
-        <li class="menu-header px-4 py-2 text-xs font-semibold uppercase text-gray-500">
+        <li
+          class="menu-header px-4 py-2 text-xs font-semibold uppercase text-gray-500"
+          [ngClass]="isRtl ? 'text-right' : 'text-left'"
+        >
           {{ menu.title }}
         </li>
       }
 
-      <!-- Link Type -->
+      <!-- LINK -->
       @if (menu.type === 'link') {
         <li class="menu-item">
           <a
             [href]="menu.externalLink || menu.routerLink"
             [target]="menu.externalLink ? '_blank' : '_self'"
+            class="menu-link flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100"
             [ngClass]="{
               active: menu.active,
               collapsed: config?.collapsed,
+              'flex-row-reverse text-right': isRtl,
             }"
-            class="menu-link flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100"
             (click)="onMenuItemClick(menu)"
           >
-            <!-- Icon -->
-            <div class="menu-icon flex-shrink-0">
+            <!-- ICON -->
+            <div class="menu-icon flex-shrink-0" [ngClass]="isRtl ? 'order-last' : 'order-first'">
               @if (menu.icon) {
                 @if (menu.iconType === 'mat-icon') {
-                  <span class="material-icons text-gray-600">{{ menu.icon }}</span>
+                  <span class="material-icons text-gray-600">
+                    {{ menu.icon }}
+                  </span>
                 } @else if (menu.iconType === 'font-awesome') {
                   <i class="fa {{ menu.icon }} text-gray-600"></i>
                 } @else {
-                  <img [src]="menu.icon" alt="icon" class="h-5 w-5 text-gray-600" />
+                  <img [src]="menu.icon" class="h-5 w-5" />
                 }
               }
             </div>
 
-            <!-- Title (hidden when collapsed) -->
+            <!-- TITLE -->
             @if (!config?.collapsed) {
-              <span class="menu-title ml-3 flex-1 text-sm font-medium">{{ menu.title }}</span>
+              <span
+                class="menu-title flex-1 text-sm font-medium"
+                [ngClass]="isRtl ? 'me-3' : 'ms-3'"
+              >
+                {{ menu.title }}
+              </span>
             }
 
-            <!-- Badge (hidden when collapsed) -->
+            <!-- BADGE -->
             @if (menu.badge && !config?.collapsed) {
               <span
-                class="menu-badge ml-auto rounded-full px-2 py-0.5 text-xs font-medium"
-                [ngClass]="{
-                  'bg-red-100 text-red-800': menu.badge.class === 'badge-danger',
-                  'bg-green-100 text-green-800': menu.badge.class === 'badge-success',
-                  'bg-yellow-100 text-yellow-800': menu.badge.class === 'badge-warning',
-                  'bg-blue-100 text-blue-800':
-                    menu.badge.class === 'badge-info' || menu.badge.class === 'badge-primary',
-                }"
+                class="menu-badge rounded-full px-2 py-0.5 text-xs font-medium"
+                [ngClass]="[
+                  isRtl ? 'mr-auto' : 'ml-auto',
+                  menu.badge.class === 'badge-danger' && 'bg-red-100 text-red-800',
+                  menu.badge.class === 'badge-success' && 'bg-green-100 text-green-800',
+                  menu.badge.class === 'badge-warning' && 'bg-yellow-100 text-yellow-800',
+                  (menu.badge.class === 'badge-info' || menu.badge.class === 'badge-primary') &&
+                    'bg-blue-100 text-blue-800',
+                ]"
               >
                 {{ menu.badge.text }}
               </span>
@@ -59,35 +70,50 @@
         </li>
       }
 
-      <!-- Dropdown Type -->
+      <!-- DROPDOWN -->
       @if (menu.type === 'dropdown') {
         <li class="dropdown-item">
           <div
             class="dropdown-toggle flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100 cursor-pointer"
-            [ngClass]="{ collapsed: config?.collapsed }"
+            [ngClass]="{
+              collapsed: config?.collapsed,
+              'flex-row-reverse text-right': isRtl,
+            }"
             (click)="toggleMenu(menu)"
           >
-            <!-- Icon -->
-            <div class="menu-icon flex-shrink-0">
+            <!-- ICON -->
+            <div class="menu-icon flex-shrink-0" [ngClass]="isRtl ? 'order-last' : 'order-first'">
               @if (menu.icon) {
                 @if (menu.iconType === 'mat-icon') {
-                  <span class="material-icons text-gray-600">{{ menu.icon }}</span>
-                } @else if (menu.iconType === 'font-awesome') {
-                  <i class="fa {{ menu.icon }} text-gray-600"></i>
+                  <span class="material-icons text-gray-600">
+                    {{ menu.icon }}
+                  </span>
                 } @else {
-                  <img [src]="menu.icon" alt="icon" class="h-5 w-5 text-gray-600" />
+                  <i class="fa {{ menu.icon }} text-gray-600"></i>
                 }
               }
             </div>
 
-            <!-- Title (hidden when collapsed) -->
+            <!-- TITLE -->
             @if (!config?.collapsed) {
-              <span class="menu-title ml-3 flex-1 text-sm font-medium">{{ menu.title }}</span>
-
-              <!-- Dropdown Arrow -->
               <span
-                class="dropdown-arrow ml-auto transition-transform"
-                [class.rotate-180]="isMenuExpanded(menu)"
+                class="menu-title flex-1 text-sm font-medium"
+                [ngClass]="isRtl ? 'me-3' : 'ms-3'"
+              >
+                {{ menu.title }}
+              </span>
+
+              <!-- ARROW -->
+              <span
+                class="dropdown-arrow transition-transform"
+                [ngClass]="{
+                  'order-last': !isRtl,
+                  'order-first': isRtl,
+                  'ml-auto': !isRtl,
+                  'mr-auto': isRtl,
+                  'rotate-180': isMenuExpanded(menu),
+                  'scale-x-[-1]': isRtl,
+                }"
               >
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -101,35 +127,40 @@
             }
           </div>
 
+          <!-- SUBMENU -->
           @if (isMenuExpanded(menu) && !config?.collapsed) {
-            <ul class="submenu-list mt-2 ml-6 border-l border-gray-700/40">
+            <ul
+              class="submenu-list mt-2 border-gray-700/40"
+              [ngClass]="isRtl ? 'mr-6 border-r' : 'ml-6 border-l'"
+            >
               @for (submenu of menu.submenus; track submenu.id) {
                 <li>
                   <a
-                    [href]="submenu.externalLink || submenu.routerLink"
-                    (click)="onMenuItemClick(submenu)"
                     class="group flex items-center gap-3 rounded-md px-4 py-2 text-sm text-gray-400 hover:bg-white/5 hover:text-gray-200"
+                    [ngClass]="isRtl ? 'flex-row-reverse text-right' : 'text-left'"
+                    (click)="onMenuItemClick(submenu)"
                   >
-                    <!-- Bullet (fixed column) -->
+                    <!-- BULLET -->
                     <span
-                      class="flex h-2 w-2 shrink-0 items-center justify-center rounded-full bg-gray-500 group-hover:bg-gray-300"
+                      class="flex h-2 w-2 shrink-0 rounded-full bg-gray-500 group-hover:bg-gray-300"
+                      [ngClass]="isRtl ? 'order-last' : 'order-first'"
                     ></span>
 
-                    <!-- Icon (fixed column) -->
-                    <span class="flex h-4 w-4 shrink-0 items-center justify-center text-gray-400">
+                    <!-- ICON -->
+                    <span
+                      class="flex h-4 w-4 shrink-0 items-center justify-center"
+                      [ngClass]="isRtl ? 'order-last' : 'order-first'"
+                    >
                       @if (submenu.icon) {
-                        @if (submenu.iconType === 'mat-icon') {
-                          <span class="material-icons text-[16px] leading-none">
-                            {{ submenu.icon }}
-                          </span>
-                        } @else {
-                          <i class="fa {{ submenu.icon }} text-xs leading-none"></i>
-                        }
+                        <i class="fa {{ submenu.icon }} text-xs"></i>
                       }
                     </span>
 
-                    <!-- Title (flex column) -->
-                    <span class="flex-1 leading-none">
+                    <!-- TITLE -->
+                    <span
+                      class="flex-1"
+                      [ngClass]="isRtl ? 'order-2 text-right' : 'order-2 text-left'"
+                    >
                       {{ submenu.title }}
                     </span>
                   </a>
@@ -140,7 +171,7 @@
         </li>
       }
 
-      <!-- Divider Type -->
+      <!-- DIVIDER -->
       @if (menu.type === 'divider' && !config?.collapsed) {
         <li class="menu-divider my-2 border-t border-gray-200"></li>
       }
