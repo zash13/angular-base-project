@@ -6,7 +6,7 @@
     <a
       [href]="logo?.url || '#'"
       class="flex items-center gap-2 no-underline"
-      style="margin-inline-start: 100px"
+      [style]="logoMargin()"
     >
       @if (logo?.image) {
         <img [src]="logo?.image" [alt]="logo?.text || 'Logo'" class="h-8 w-auto" />
@@ -24,7 +24,7 @@
       type="button"
       (click)="toggle()"
       class="inline-flex items-center justify-center w-10 h-10 p-2 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
-      style="margin-inline-end: 20px"
+      [style]="toggleMargin()"
       [attr.aria-expanded]="!sidebarCollapsed"
       [attr.title]="sidebarCollapsed ? 'Open sidebar' : 'Close sidebar'"
     >

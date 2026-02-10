@@ -6,6 +6,29 @@
   background-color: var(--sidebar-profile-background);
   min-height: 56px;
 
+  .footer-actions {
+    display: flex;
+    width: 100%;
+    padding: 0.75rem;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+
+    // RTL support
+    &[dir="rtl"] {
+      direction: rtl;
+    }
+  }
+  
+  // RTL support at component level
+  &[dir="rtl"] {
+    direction: rtl;
+    
+    .footer-actions {
+      direction: rtl;
+    }
+  }
+
   .footer-item {
     flex: 1;
     position: relative;
@@ -14,8 +37,9 @@
     justify-content: center;
 
     .footer-btn {
-      width: 100%;
-      height: 100%;
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
       color: var(--sidebar-text);
       background: none;
       border: none;
@@ -26,10 +50,35 @@
       gap: 4px;
       transition: all var(--sidebar-transition-duration) ease;
       position: relative;
+      border-radius: 50%;
 
       &:hover {
         color: var(--sidebar-text);
         background-color: var(--sidebar-hover);
+      }
+
+      // Specific button styles
+      &.notification-btn:hover {
+        background-color: var(--sidebar-hover);
+      }
+
+      &.messages-btn:hover {
+        background-color: var(--sidebar-hover);
+      }
+
+      &.settings-btn:hover {
+        background-color: var(--sidebar-hover);
+      }
+
+      &.logout-btn:hover {
+        background-color: rgba(var(--sidebar-error), 0.1);
+        color: var(--sidebar-error);
+      }
+
+      &.collapsed {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
       }
 
       .mat-icon {
@@ -51,6 +100,22 @@
         min-width: 16px;
         height: 16px;
         line-height: 16px;
+      }
+      
+      // Badge styling for notifications and messages
+      .notification-badge,
+      .messages-badge {
+        font-size: 10px;
+        font-weight: 600;
+        min-width: 16px;
+        height: 16px;
+        line-height: 16px;
+        background-color: var(--sidebar-error);
+        color: white;
+      }
+      
+      .messages-badge {
+        background-color: var(--sidebar-info);
       }
     }
   }

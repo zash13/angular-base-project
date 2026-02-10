@@ -20,4 +20,18 @@ export class Navbar {
     console.log('sometihg toggled ');
     this.toggleSidebar.emit();
   }
+  navItemsToggleMargin: number = 20;
+  navItemsLogoMargin: number = 100;
+
+  logoMargin(): string {
+    return this.sidebarPosition === 'left'
+      ? `margin-inline-end: ${this.navItemsLogoMargin}px`
+      : `margin-inline-start: ${this.navItemsLogoMargin}px`;
+  }
+
+  toggleMargin(): string {
+    return this.sidebarPosition === 'left'
+      ? `margin-inline-start: ${this.navItemsToggleMargin}px`
+      : `margin-inline-end: ${this.navItemsToggleMargin}px`;
+  }
 }

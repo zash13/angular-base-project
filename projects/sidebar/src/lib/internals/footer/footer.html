@@ -1,11 +1,11 @@
-<div class="sidebar-footer">
-  <div class="footer-actions flex items-center justify-between px-3 py-3">
+<div class="sidebar-footer" [attr.dir]="config?.rtl ? 'rtl' : 'ltr'">
+  <div class="footer-actions" [ngClass]="config?.rtl ? 'items-start justify-start' : 'items-start justify-start'">
     <!-- Notifications -->
     @if (shouldShowButton('notifications')) {
       <div class="relative">
         <button
           type="button"
-          class="notification-btn flex h-10 w-10 items-center justify-center rounded-full text-gray-600 transition-all hover:bg-gray-100 hover:text-gray-900"
+          class="notification-btn footer-btn"
           [class.collapsed]="isCollapsed"
           (click)="toggleNotifications()"
           [title]="isCollapsed ? 'Notifications' : ''"
@@ -21,7 +21,9 @@
 
           @if (unreadNotificationsCount > 0 && !isCollapsed) {
             <span
-              class="notification-badge absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-medium text-white shadow-sm"
+              class="notification-badge absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-medium shadow-sm"
+              [style.background-color]="config?.rtl ? 'var(--sidebar-error)' : 'var(--sidebar-error)'"
+              [style.color]="'white'"
             >
               {{ unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount }}
             </span>
@@ -42,7 +44,7 @@
       <div class="relative">
         <button
           type="button"
-          class="messages-btn flex h-10 w-10 items-center justify-center rounded-full text-gray-600 transition-all hover:bg-gray-100 hover:text-gray-900"
+          class="messages-btn footer-btn"
           [class.collapsed]="isCollapsed"
           (click)="toggleMessages()"
           [title]="isCollapsed ? 'Messages' : ''"
@@ -58,7 +60,9 @@
 
           @if (unreadMessagesCount > 0 && !isCollapsed) {
             <span
-              class="messages-badge absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-500 px-1 text-xs font-medium text-white shadow-sm"
+              class="messages-badge absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-medium shadow-sm"
+              [style.background-color]="config?.rtl ? 'var(--sidebar-info)' : 'var(--sidebar-info)'"
+              [style.color]="'white'"
             >
               {{ unreadMessagesCount > 99 ? '99+' : unreadMessagesCount }}
             </span>
@@ -79,7 +83,7 @@
       <div class="relative">
         <button
           type="button"
-          class="settings-btn flex h-10 w-10 items-center justify-center rounded-full text-gray-600 transition-all hover:bg-gray-100 hover:text-gray-900"
+          class="settings-btn footer-btn"
           [class.collapsed]="isCollapsed"
           (click)="toggleSettings()"
           [title]="isCollapsed ? 'Settings' : ''"
@@ -114,7 +118,7 @@
       <div>
         <button
           type="button"
-          class="logout-btn flex h-10 w-10 items-center justify-center rounded-full text-gray-600 transition-all hover:bg-red-50 hover:text-red-600"
+          class="logout-btn footer-btn"
           [class.collapsed]="isCollapsed"
           (click)="onLogout()"
           [title]="isCollapsed ? 'Logout' : ''"

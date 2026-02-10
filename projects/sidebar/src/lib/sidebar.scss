@@ -17,6 +17,17 @@
     right: 0;
     left: auto;
   }
+  
+  // RTL theme support
+  &.sidebar-rtl {
+    direction: rtl;
+    
+    .sidebar-footer-container {
+      .footer-actions {
+        direction: rtl;
+      }
+    }
+  }
 
   &.with-top-navbar {
     top: 64px;
@@ -28,12 +39,27 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    
+    // Ensure theme variables are inherited
+    &, & * {
+      background-color: inherit;
+      color: inherit;
+    }
   }
 
   .sidebar-profile-container,
   .sidebar-search-container {
     flex-shrink: 0;
     padding: 0.75rem;
+    
+    // Ensure theme variables are inherited by child components
+    & ::ng-deep lib-sidebar-profile,
+    & ::ng-deep lib-sidebar-search {
+      &, & * {
+        background-color: inherit;
+        color: inherit;
+      }
+    }
   }
 
   .sidebar-menu-scroll-container {
@@ -50,6 +76,14 @@
   .sidebar-footer-container {
     flex-shrink: 0;
     border-top: 1px solid var(--sidebar-border);
+    
+    // Ensure theme variables are inherited by footer component
+    & ::ng-deep lib-sidebar-footer {
+      &, & * {
+        background-color: inherit;
+        color: inherit;
+      }
+    }
   }
 
   &.sidebar-collapsed {

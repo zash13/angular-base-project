@@ -200,6 +200,8 @@ export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
       collapsed: this.config?.collapsed ?? false,
       footerCollapsedMode: this.config?.footerCollapsedMode ?? 'all',
       collapsedFooterButton: this.config?.collapsedFooterButton ?? 'logout',
+      rtl: this.config?.rtl ?? false,
+      position: this.config?.position ?? 'left',
     };
   }
 

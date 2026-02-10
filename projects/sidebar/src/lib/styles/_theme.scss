@@ -2,7 +2,7 @@
 @use '../styles' as *;
 
 // CSS Custom Properties for theming
-:host {
+:host, .sidebar {
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 80px;
   
@@ -109,6 +109,20 @@ $transition-duration: var(--sidebar-transition-duration, 0.3s);
   // Theme-based styling
   &[data-theme="light"] {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  // RTL support
+  &[dir="rtl"] {
+    direction: rtl;
+    
+    .mat-list-item {
+      .mat-list-item-content {
+        .mat-list-item-icon {
+          margin-right: 0;
+          margin-left: 16px;
+        }
+      }
+    }
   }
 
   &.sidebar-collapsed {
@@ -307,6 +321,27 @@ $transition-duration: var(--sidebar-transition-duration, 0.3s);
 
         .mat-list-item-content {
           padding-left: 13px;
+        }
+      }
+      
+      // RTL active state support
+      :host([dir="rtl"]) &,
+      [dir="rtl"] & {
+        &.active {
+          border-left: none;
+          border-right: 3px solid $primary-color;
+          
+          .mat-list-item-content {
+            padding-left: 16px;
+            padding-right: 13px;
+          }
+        }
+        
+        .mat-list-item-content {
+          .mat-list-item-icon {
+            margin-right: 0;
+            margin-left: 16px;
+          }
         }
       }
 

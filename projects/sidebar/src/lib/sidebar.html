@@ -12,7 +12,7 @@
     'sidebar-collapsed': config.collapsed,
     'sidebar-left': config.position === 'left',
     'sidebar-right': config.position === 'right',
-    'sidebar-rtl': config.rtl,
+    'sidebar-rtl': config.rtl || config.position === 'right',
     'sidebar-mobile': isMobile,
     'sidebar-with-backdrop': config.backdrop && isMobile,
     'sidebar-bg': config.backgroundImage,
@@ -24,6 +24,7 @@
   [style.width]="'100%'"
   [style.height]="'100%'"
   [attr.data-theme]="currentTheme.background === '#ffffff' ? 'light' : 'dark'"
+  [attr.dir]="(config.rtl || config.position === 'right') ? 'rtl' : 'ltr'"
   [style]="getThemeCssVariables()"
 >
   <!-- Backdrop for mobile -->
