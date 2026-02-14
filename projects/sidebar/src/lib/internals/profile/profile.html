@@ -1,34 +1,41 @@
-<div class="sidebar-profile" [class.collapsed]="collapsed">
+<div
+  class="mx-3 my-2 rounded-md px-3 py-2 transition-all duration-200 ease-in-out bg-[var(--sidebar-profile-background)] text-[var(--sidebar-text)]"
+  [class.collapsed]="collapsed"
+>
   @if (!collapsed) {
-    <div class="profile-expanded flex items-center gap-3 p-3">
+    <div class="flex items-center gap-3">
       <img
         [src]="user?.avatar"
         [alt]="user?.name"
-        class="profile-avatar h-10 w-10 rounded-full object-cover"
+        class="shrink-0 h-9 w-9 rounded-full object-cover"
       />
-      <div class="profile-info flex-1 overflow-hidden">
-        <h3 class="profile-name text-sm font-semibold text-gray-800 truncate">
+
+      <div class="flex-1 min-w-0 leading-tight">
+        <!-- Name -->
+        <h3 class="text-sm font-semibold truncate">
           {{ user?.name }}
         </h3>
-        <p class="profile-role text-xs text-gray-500 truncate">{{ user?.role }}</p>
+
+        <div class="flex items-center gap-2 text-xs text-[var(--sidebar-text-secondary)]">
+          <p class="truncate">
+            {{ user?.role }}
+          </p>
+
+          <span
+            class="w-1.5 h-1.5 rounded-full"
+            [ngClass]="{
+              'bg-[var(--sidebar-success)]': user?.status === 'online',
+              'bg-[var(--sidebar-error)]': user?.status === 'offline',
+              'bg-[var(--sidebar-warning)]': user?.status === 'away',
+            }"
+          ></span>
+        </div>
       </div>
-      <div
-        class="profile-status h-2 w-2 rounded-full"
-        [ngClass]="{
-          'bg-green-500': user?.status === 'online',
-          'bg-gray-400': user?.status === 'offline',
-          'bg-yellow-500': user?.status === 'away',
-          'bg-red-500': user?.status === 'busy',
-        }"
-      ></div>
     </div>
   } @else {
-    <div class="profile-collapsed flex items-center justify-center p-3">
-      <img
-        [src]="user?.avatar"
-        [alt]="user?.name"
-        class="profile-avatar-icon h-8 w-8 rounded-full object-cover"
-      />
+    <!-- Collapsed -->
+    <div class="flex items-center justify-center py-2">
+      <img [src]="user?.avatar" [alt]="user?.name" class="h-8 w-8 rounded-full object-cover" />
     </div>
   }
 </div>
