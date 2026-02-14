@@ -9,71 +9,80 @@
 <nav
   class="sidebar mat-elevation-z4"
   [ngClass]="{
-    'sidebar-collapsed': config.collapsed,
-    'sidebar-left': config.position === 'left',
-    'sidebar-right': config.position === 'right',
-    'sidebar-rtl': config.rtl || config.position === 'right',
+    'sidebar-collapsed': state.collapsed(),
+    'sidebar-left': layout?.position === 'left',
+    'sidebar-right': layout?.position === 'right',
+    'sidebar-rtl': layout?.rtl || layout?.position === 'right',
     'sidebar-mobile': isMobile,
-    'sidebar-with-backdrop': config.backdrop && isMobile,
-    'sidebar-bg': config.backgroundImage,
+    'sidebar-with-backdrop': layout?.backdrop && isMobile,
     'light-theme': currentTheme.background === '#ffffff',
     'dark-theme': currentTheme.background !== '#ffffff',
     'with-top-navbar': true,
   }"
-  [style.backgroundImage]="config.backgroundImage ? 'url(' + config.backgroundImage + ')' : null"
-  [style.width]="'100%'"
-  [style.height]="'100%'"
   [attr.data-theme]="currentTheme.background === '#ffffff' ? 'light' : 'dark'"
-  [attr.dir]="(config.rtl || config.position === 'right') ? 'rtl' : 'ltr'"
+  [attr.dir]="layout?.rtl || layout?.position === 'right' ? 'rtl' : 'ltr'"
   [style]="getThemeCssVariables()"
 >
-  <!-- Backdrop for mobile -->
-  @if (config.backdrop && isMobile && !config.collapsed) {
+  <!-- Mobile Backdrop -->
+  @if (layout?.backdrop && isMobile && !state.collapsed()) {
     <div
       class="sidebar-backdrop mat-app-backdrop"
-      [style.opacity]="config.backdropOpacity || 0.5"
+      [style.opacity]="0.5"
       (click)="requestToggle()"
     ></div>
   }
 
-  <div class="sidebar-content">
-    <!-- Remove the header from sidebar since we have top navbar -->
-    @if (!config.collapsed) {
-      <!-- User Profile (non-scrollable) -->
-      @if (showProfile) {
-        <div class="sidebar-profile-container">
-          <lib-sidebar-profile
-            [user]="user"
-            [collapsed]="config.collapsed ?? false"
-          ></lib-sidebar-profile>
-        </div>
-      }
+  <div
+    class="sidebar-content"
+    [class.cursor-pointer]="state.collapsed()"
+    (click)="onSidebarContentClick()"
+  >
+    <!-- Header -->
+    <div class="sidebar-header-container">
+      <lib-sidebar-header
+        [config]="{
+          collapsed: state.collapsed(),
+          rtl: layout?.rtl ?? false,
+          position: layout?.position ?? 'left',
+          toggleButton: showToggleButton,
+          isRtl: isRtl,
+        }"
+        [logo]="config.branding?.logo ?? null"
+        (toggleSidebar)="toggle()"
+      ></lib-sidebar-header>
+    </div>
 
-      <!-- Search (non-scrollable) -->
-      @if (!showSearch) {
-        <div class="sidebar-search-container">
-          <lib-sidebar-search
-            [config]="config"
-            [searchText]="searchText"
-            (searchChanged)="onSearch($event)"
-          ></lib-sidebar-search>
-        </div>
-      }
+    <!-- Profile -->
+    @if (!state.collapsed() && showProfile) {
+      <div class="sidebar-profile-container">
+        <lib-sidebar-profile [user]="user" [collapsed]="state.collapsed()"></lib-sidebar-profile>
+      </div>
     }
 
-    <!-- Scrollable Menu Area -->
+    <!-- Search -->
+    @if (!state.collapsed() && showSearch) {
+      <div class="sidebar-search-container">
+        <lib-sidebar-search
+          [searchText]="searchText"
+          (searchChanged)="onSearch($event)"
+        ></lib-sidebar-search>
+      </div>
+    }
+
+    <!-- Scrollable Menu -->
     <div class="sidebar-menu-scroll-container">
       <cdk-virtual-scroll-viewport itemSize="48" class="sidebar-scroll-viewport">
         <lib-sidebar-menu
           [menus]="menus"
-          [config]="config"
-          [direction]="config.position ?? `left`"
+          [direction]="layout?.position ?? 'left'"
+          [config]="{ collapsed: state.collapsed(), rtl: layout?.rtl ?? false }"
           (menuItemClicked)="menuItemClicked.emit($event)"
         ></lib-sidebar-menu>
       </cdk-virtual-scroll-viewport>
     </div>
   </div>
 
+  <!-- Footer -->
   <div class="sidebar-footer-container">
     <lib-sidebar-footer
       [notifications]="notifications"

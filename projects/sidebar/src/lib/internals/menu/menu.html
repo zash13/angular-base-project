@@ -79,7 +79,7 @@
               collapsed: config?.collapsed,
               'flex-row-reverse text-right': isRtl,
             }"
-            (click)="toggleMenu(menu)"
+            (click)="toggleMenu(menu, $event)"
           >
             <!-- ICON -->
             <div class="menu-icon flex-shrink-0" [ngClass]="isRtl ? 'order-last' : 'order-first'">
@@ -128,7 +128,7 @@
           </div>
 
           <!-- SUBMENU -->
-          @if (isMenuExpanded(menu) && !config?.collapsed) {
+          @if (isMenuExpanded(menu)) {
             <ul
               class="submenu-list mt-2 border-gray-700/40"
               [ngClass]="isRtl ? 'mr-6 border-r' : 'ml-6 border-l'"
@@ -138,6 +138,8 @@
                   <a
                     class="group flex items-center gap-3 rounded-md px-4 py-2 text-sm text-gray-400 hover:bg-white/5 hover:text-gray-200"
                     [ngClass]="isRtl ? 'flex-row-reverse text-right' : 'text-left'"
+                    [href]="submenu.externalLink || submenu.routerLink"
+                    [target]="submenu.externalLink ? '_blank' : '_self'"
                     (click)="onMenuItemClick(submenu)"
                   >
                     <!-- BULLET -->

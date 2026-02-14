@@ -1,52 +1,32 @@
 import {
   Component,
   Input,
-  Output,
-  EventEmitter,
-  OnInit,
-  OnDestroy,
-  Inject,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   OnChanges,
   SimpleChanges,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
-// import child components
 import { HeaderComponent } from './internals/header/header';
 import { ProfileComponent } from './internals/profile/profile';
 import { SearchComponent } from './internals/search/search';
 import { MenuComponent as SidebarMenuComponent } from './internals/menu/menu';
 import { FooterComponent } from './internals/footer/footer';
 
-import { SIDEBAR_DATA_SOURCE } from './sidebar-tokens';
-import { SidebarDataSource } from './contracts/sidebar-data-source';
-import { SidebarMaterialModule } from './sidebar-material.module';
-// import interfaces and services
-import {
-  MenuItem,
-  SidebarConfig,
-  UserProfile,
-  LogoConfig,
-  SidebarMessage,
-  SidebarNotification,
-} from './models/sidebar-models';
-import {
-  SidebarTheme,
-  SidebarThemeConfig,
-  SidebarThemePreset,
-  DEFAULT_DARK_THEME,
-  DEFAULT_LIGHT_THEME,
-} from './models/sidebar-theme';
+import { SidebarState } from './state/sidebar-state';
+import { SidebarThemeService } from './theme/sidebar-theme.service';
+import { SidebarConfigModel } from './models/sidebar-input-model';
+import { SidebarFacade } from './fecade/sidebar-facade.service';
 
 @Component({
   selector: 'lib-sidebar',
   standalone: true,
   imports: [
     CommonModule,
-    SidebarMaterialModule,
+    ScrollingModule,
     HeaderComponent,
     ProfileComponent,
     SearchComponent,
@@ -56,118 +36,123 @@ import {
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+
+  providers: [SidebarState],
 })
-export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
-  private subscriptions = new Subscription();
-  private dataSource: SidebarDataSource;
+export class SidebarComponent implements OnChanges {
+  @Input() overrides?: Partial<SidebarConfigModel>;
+  @Input() collapsed?: boolean;
 
-  @Input() menus: MenuItem[] = [];
-  @Input() config: Partial<SidebarConfig> = {
-    width: 260,
-    collapsedWidth: 80,
-    collapsed: false,
-    animate: true,
-    footerCollapsedMode: 'single',
-    collapsedFooterButton: 'logout',
-  };
-
-  @Input() themeConfig: SidebarThemeConfig = { preset: 'light' };
-  @Input() darkMode?: boolean; // Legacy boolean support
-  @Input() customTheme?: Partial<SidebarTheme>;
-
-  @Input() user!: UserProfile;
-  @Input() logo!: LogoConfig;
-
-  @Input() showSearch = true;
-  @Input() showProfile = true;
-  @Input() showNotifications = true;
-  @Input() showMessages = true;
-
-  @Output() menuItemClicked = new EventEmitter<MenuItem>();
-  @Output() sidebarToggled = new EventEmitter<boolean>();
+  @Output() menuItemClicked = new EventEmitter<any>();
+  @Output() toggleSidebar = new EventEmitter<void>();
   @Output() logoutClicked = new EventEmitter<void>();
   @Output() searchChanged = new EventEmitter<string>();
-  @Output() notificationClicked = new EventEmitter<SidebarNotification>();
-  @Output() messageClicked = new EventEmitter<SidebarMessage>();
+  @Output() notificationClicked = new EventEmitter<any>();
+  @Output() messageClicked = new EventEmitter<any>();
   @Output() sidebarToggleRequested = new EventEmitter<void>();
+  @Output() collapsedChange = new EventEmitter<boolean>();
+
+  toggle() {
+    console.log('sometihg toggled ');
+    this.toggleSidebar.emit();
+  }
+  private _previousCollapsed: boolean | undefined;
+
+  constructor(
+    public state: SidebarState,
+    public facade: SidebarFacade,
+    public themeService: SidebarThemeService,
+  ) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['overrides']) {
+      this.facade.setOverrides(this.overrides ?? {});
+    }
+
+    const configCollapsed = this.facade.config().layout?.collapsed;
+    const inputCollapsed = changes['collapsed']?.currentValue;
+
+    if (changes['collapsed'] && inputCollapsed !== undefined) {
+      if (inputCollapsed !== this._previousCollapsed) {
+        this.state.setCollapsed(inputCollapsed);
+        this._previousCollapsed = inputCollapsed;
+      }
+    } else if (changes['overrides'] && configCollapsed !== undefined) {
+      if (configCollapsed !== this._previousCollapsed) {
+        this.state.setCollapsed(configCollapsed);
+        this._previousCollapsed = configCollapsed;
+      }
+    }
+  }
+
+  // =========================
+  // config
+  // =========================
+
+  get config() {
+    return this.facade.config();
+  }
+
+  get layout() {
+    return this.config.layout;
+  }
+
+  get features() {
+    return this.config.features;
+  }
+
+  get user() {
+    return this.config.user;
+  }
+
+  // =========================
+  // data (from datasource)
+  // =========================
+
+  get menus() {
+    return this.facade.data().menus;
+  }
+
+  get notifications() {
+    return this.facade.data().notifications;
+  }
+
+  get messages() {
+    return this.facade.data().messages;
+  }
+
+  get unreadNotificationsCount(): number {
+    return this.notifications.filter((n: any) => !n.read).length;
+  }
+
+  get unreadMessagesCount(): number {
+    return this.messages.filter((m: any) => !m.read).length;
+  }
+
+  // =========================
+  // theme
+  // =========================
+
+  get currentTheme() {
+    return this.themeService.theme();
+  }
+
+  getThemeCssVariables() {
+    return this.themeService.cssVariables();
+  }
+
+  // =========================
+  // state
+  // =========================
+
+  onSidebarContentClick() {}
 
   requestToggle() {
     this.sidebarToggleRequested.emit();
   }
-  searchText: string = '';
-
-  isMobile = false;
-  notifications: SidebarNotification[] = [];
-  messages: SidebarMessage[] = [];
-
-  unreadNotificationsCount = 0;
-  unreadMessagesCount = 0;
-  constructor(
-    @Inject(SIDEBAR_DATA_SOURCE) private _dataSource: SidebarDataSource,
-    private cdr: ChangeDetectorRef,
-  ) {
-    this.dataSource = _dataSource;
-  }
-
-  // ---------------- lifecycle ----------------
-
-  ngOnInit() {
-    this.checkMobile();
-    this.loadData();
-    this.config = {
-      footerCollapsedMode: 'all',
-      collapsedFooterButton: 'logout',
-      ...this.config,
-    };
-    this.applyTheme();
-  }
-
-  ngOnDestroy() {
-    this.subscriptions.unsubscribe();
-  }
-
-  // ---------------- data ----------------
-
-  private loadData() {
-    // menus are OPTIONAL input
-    if (!this.menus.length) {
-      this.subscriptions.add(this.dataSource.menus().subscribe((menus) => (this.menus = menus)));
-    }
-
-    this.subscriptions.add(
-      this.dataSource.notifications().subscribe((n) => {
-        this.notifications = n;
-        this.updateUnreadCounts();
-      }),
-    );
-
-    this.subscriptions.add(
-      this.dataSource.messages().subscribe((m) => {
-        this.messages = m;
-        this.updateUnreadCounts();
-      }),
-    );
-  }
-
-  // ---------------- UI actions ----------------
-
-  toggleSidebar() {
-    console.log('sidebarToggled');
-    this.config.collapsed = !this.config.collapsed;
-    this.sidebarToggled.emit(this.config.collapsed);
-  }
-
-  onNotificationClick(notification: SidebarNotification) {
-    this.notificationClicked.emit(notification);
-    this.dataSource.markNotificationAsRead(notification.id.toString());
-  }
-
-  onMessageClick(message: SidebarMessage) {
-    this.messageClicked.emit(message);
-    this.dataSource.markMessageAsRead(message.id.toString());
-  }
 
   onSearch(value: string) {
+    this.state.setSearch(value);
     this.searchChanged.emit(value);
   }
 
@@ -175,107 +160,37 @@ export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
     this.logoutClicked.emit();
   }
 
-  // ---------------- helpers ----------------
-
-  private updateUnreadCounts() {
-    this.unreadNotificationsCount = this.notifications.filter((n) => !n.read).length;
-    this.unreadMessagesCount = this.messages.filter((m) => !m.read).length;
+  get isMobile() {
+    return this.state.isMobile();
   }
 
-  private checkMobile() {
-    this.isMobile = window.innerWidth < 768;
-    if (this.isMobile) {
-      this.config.collapsed = true;
-    }
+  get searchText() {
+    return this.state.searchText();
   }
 
-  get sidebarWidth() {
-    return this.config.collapsed
-      ? `${this.config.collapsedWidth ?? 80}px`
-      : `${this.config.width ?? 260}px`;
+  get showProfile(): boolean {
+    return this.features?.profile ?? true;
+  }
+
+  get showSearch(): boolean {
+    return this.features?.search ?? true;
+  }
+
+  get showToggleButton(): boolean {
+    return this.features?.toggleButton ?? true;
+  }
+
+  get isRtl(): boolean {
+    return this.layout?.rtl ?? this.layout?.position === 'right';
   }
 
   getFooterConfig() {
     return {
-      collapsed: this.config?.collapsed ?? false,
-      footerCollapsedMode: this.config?.footerCollapsedMode ?? 'all',
-      collapsedFooterButton: this.config?.collapsedFooterButton ?? 'logout',
-      rtl: this.config?.rtl ?? false,
-      position: this.config?.position ?? 'left',
+      collapsed: this.state.collapsed(),
+      footerCollapsedMode: this.features?.footerMode ?? 'all',
+      collapsedFooterButton: this.features?.collapsedFooterButton ?? 'logout',
+      rtl: this.layout?.rtl ?? false,
+      position: this.layout?.position ?? 'left',
     };
-  }
-
-  // ---------------- Theme Management ----------------
-
-  private _currentTheme: SidebarTheme = DEFAULT_LIGHT_THEME;
-
-  get currentTheme(): SidebarTheme {
-    return this._currentTheme;
-  }
-
-  private applyTheme() {
-    // Determine which theme to use
-    if (this.darkMode !== undefined) {
-      // Legacy boolean support
-      this._currentTheme = this.darkMode ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
-    } else if (this.themeConfig?.darkMode !== undefined) {
-      // Config-based boolean support
-      this._currentTheme = this.themeConfig.darkMode ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
-    } else if (this.themeConfig?.preset) {
-      // Preset-based support
-      this._currentTheme =
-        this.themeConfig.preset === 'light' ? DEFAULT_LIGHT_THEME : DEFAULT_DARK_THEME;
-    } else {
-      // Default to light theme
-      this._currentTheme = DEFAULT_LIGHT_THEME;
-    }
-
-    // Apply custom theme overrides if provided
-    if (this.themeConfig?.customTheme || this.customTheme) {
-      this._currentTheme = {
-        ...this._currentTheme,
-        ...this.themeConfig?.customTheme,
-        ...this.customTheme,
-      };
-    }
-  }
-
-  getThemeCssVariables(): { [key: string]: string } {
-    return {
-      '--sidebar-background': this._currentTheme.background,
-      '--sidebar-surface': this._currentTheme.surface,
-      '--sidebar-primary': this._currentTheme.primary,
-      '--sidebar-text': this._currentTheme.text,
-      '--sidebar-text-secondary': this._currentTheme.textSecondary,
-      '--sidebar-border': this._currentTheme.border,
-      '--sidebar-hover': this._currentTheme.hover,
-      '--sidebar-active': this._currentTheme.active,
-      '--sidebar-header-background':
-        this._currentTheme.headerBackground || this._currentTheme.background,
-      '--sidebar-header-text': this._currentTheme.headerText || this._currentTheme.textSecondary,
-      '--sidebar-profile-background':
-        this._currentTheme.profileBackground || this._currentTheme.surface,
-      '--sidebar-search-background': this._currentTheme.searchBackground || 'transparent',
-      '--sidebar-search-border': this._currentTheme.searchBorder || this._currentTheme.border,
-      '--sidebar-success': this._currentTheme.success,
-      '--sidebar-warning': this._currentTheme.warning,
-      '--sidebar-error': this._currentTheme.error,
-      '--sidebar-info': this._currentTheme.info,
-      '--sidebar-shadow-color': this._currentTheme.shadowColor,
-      '--sidebar-transition-duration': this._currentTheme.transitionDuration,
-    };
-  }
-
-  // Update theme dynamically
-  updateTheme(themeConfig: Partial<SidebarThemeConfig>) {
-    this.themeConfig = { ...this.themeConfig, ...themeConfig };
-    this.applyTheme();
-    this.cdr.markForCheck();
-  }
-
-  // Trigger change detection when theme inputs change
-  ngOnChanges() {
-    this.applyTheme();
-    this.cdr.markForCheck();
   }
 }
