@@ -19,17 +19,16 @@
     right: 0;
     left: auto;
   }
-  
-  // Collapsed state - shrink to icons only
+
   &.sidebar-collapsed {
-    width: 72px;
+    width: 80px;
     transition: width 0.3s ease;
   }
-  
+
   // RTL theme support
   &.sidebar-rtl {
     direction: rtl;
-    
+
     .sidebar-footer-container {
       .footer-actions {
         direction: rtl;
@@ -47,13 +46,14 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    
+
     .sidebar-header-container {
       flex-shrink: 0;
     }
-    
+
     // Ensure theme variables are inherited
-    &, & * {
+    &,
+    & * {
       background-color: inherit;
       color: inherit;
     }
@@ -63,11 +63,12 @@
   .sidebar-search-container {
     flex-shrink: 0;
     padding: 0.75rem;
-    
+
     // Ensure theme variables are inherited by child components
     & ::ng-deep lib-sidebar-profile,
     & ::ng-deep lib-sidebar-search {
-      &, & * {
+      &,
+      & * {
         background-color: inherit;
         color: inherit;
       }
@@ -88,10 +89,11 @@
   .sidebar-footer-container {
     flex-shrink: 0;
     border-top: 1px solid var(--sidebar-border);
-    
+
     // Ensure theme variables are inherited by footer component
     & ::ng-deep lib-sidebar-footer {
-      &, & * {
+      &,
+      & * {
         background-color: inherit;
         color: inherit;
       }
