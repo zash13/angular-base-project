@@ -7,6 +7,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MenuItem, SidebarConfig } from '../../models/sidebar-models';
+import { OverlayModule } from '@angular/cdk/overlay';
 @Component({
   selector: 'lib-sidebar-menu',
   standalone: true,
@@ -18,30 +19,36 @@ import { MenuItem, SidebarConfig } from '../../models/sidebar-models';
     MatChipsModule,
     MatRippleModule,
     MatTooltipModule,
+    OverlayModule,
   ],
   templateUrl: './menu.html',
   styleUrls: ['./menu.scss'],
 })
 export class MenuComponent {
   @Input() menus: MenuItem[] = [];
-  @Input() config: Partial<SidebarConfig> = {};
+  @Input() config: { collapsed: boolean; rtl?: boolean } = { collapsed: false, rtl: false };
   @Input() direction: 'left' | 'right' = 'left';
 
   @Output() menuItemClicked = new EventEmitter<MenuItem>();
 
   expandedMenuIds = new Set<string>();
+  openDropdownId: string | null = null;
 
   get isRtl(): boolean {
-    return this.direction === 'right';
+    return this.direction === 'right' || !!this.config.rtl;
   }
 
-  toggleMenu(menu: MenuItem) {
-    if (this.config.collapsed) return;
-
+  toggleMenu(menu: MenuItem, event: Event) {
+    event.stopPropagation();
+    
     if (menu.type === 'dropdown') {
-      this.expandedMenuIds.has(menu.id)
-        ? this.expandedMenuIds.delete(menu.id)
-        : this.expandedMenuIds.add(menu.id);
+      if (this.expandedMenuIds.has(menu.id)) {
+        this.expandedMenuIds.delete(menu.id);
+        this.openDropdownId = null;
+      } else {
+        this.expandedMenuIds.add(menu.id);
+        this.openDropdownId = menu.id;
+      }
     }
   }
 
@@ -51,5 +58,10 @@ export class MenuComponent {
 
   isMenuExpanded(menu: MenuItem): boolean {
     return menu.type === 'dropdown' ? this.expandedMenuIds.has(menu.id) : false;
+  }
+
+  closeDropdown() {
+    this.expandedMenuIds.clear();
+    this.openDropdownId = null;
   }
 }

@@ -63,17 +63,27 @@
     }
 
     <!-- Toggle Button -->
-    <button
-      type="button"
-      class="toggle-button flex h-8 w-8 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-      (click)="toggleSidebar.emit()"
-      title="{{ config?.collapsed ? 'Expand sidebar' : 'Collapse sidebar' }}"
-    >
-      @if (config?.collapsed) {
-        <span class="material-icons text-lg">chevron_right</span>
-      } @else {
-        <span class="material-icons text-lg">chevron_left</span>
-      }
-    </button>
+    @if (showToggleButton) {
+      <button
+        type="button"
+        class="toggle-button flex h-8 w-8 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+        (click)="toggleSidebar.emit()"
+        title="{{ config?.collapsed ? 'Expand sidebar' : 'Collapse sidebar' }}"
+      >
+        @if (config?.collapsed) {
+          @if (isRtl) {
+            <span class="material-icons text-lg">chevron_left</span>
+          } @else {
+            <span class="material-icons text-lg">chevron_right</span>
+          }
+        } @else {
+          @if (isRtl) {
+            <span class="material-icons text-lg">chevron_right</span>
+          } @else {
+            <span class="material-icons text-lg">chevron_left</span>
+          }
+        }
+      </button>
+    }
   </div>
 </header>

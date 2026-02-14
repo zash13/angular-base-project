@@ -7,6 +7,8 @@
   z-index: 10;
   overflow: hidden;
   height: 100%;
+  width: 260px;
+  transition: width 0.3s ease;
 
   &.sidebar-left {
     left: 0;
@@ -16,6 +18,12 @@
   &.sidebar-right {
     right: 0;
     left: auto;
+  }
+  
+  // Collapsed state - shrink to icons only
+  &.sidebar-collapsed {
+    width: 72px;
+    transition: width 0.3s ease;
   }
   
   // RTL theme support
@@ -39,6 +47,10 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    
+    .sidebar-header-container {
+      flex-shrink: 0;
+    }
     
     // Ensure theme variables are inherited
     &, & * {

@@ -23,6 +23,7 @@ export interface SidebarFeatureOptions {
   messages?: boolean;
   footerMode?: 'all' | 'single' | 'none';
   collapsedFooterButton?: 'notifications' | 'messages' | 'settings' | 'logout';
+  toggleButton?: boolean;
 }
 export interface SidebarLayoutOptions {
   width?: number;

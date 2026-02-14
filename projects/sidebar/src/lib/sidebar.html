@@ -32,7 +32,22 @@
     ></div>
   }
 
-  <div class="sidebar-content">
+  <div class="sidebar-content" [class.cursor-pointer]="state.collapsed()" (click)="onSidebarContentClick()">
+    <!-- Header -->
+    <div class="sidebar-header-container">
+      <lib-sidebar-header
+        [config]="{
+          collapsed: state.collapsed(),
+          rtl: layout?.rtl ?? false,
+          position: layout?.position ?? 'left',
+          toggleButton: showToggleButton,
+          isRtl: isRtl
+        }"
+        [logo]="config.branding?.logo ?? null"
+        (toggleSidebar)="toggleSidebar()"
+      ></lib-sidebar-header>
+    </div>
+
     <!-- Profile -->
     @if (!state.collapsed() && showProfile) {
       <div class="sidebar-profile-container">
@@ -56,6 +71,7 @@
         <lib-sidebar-menu
           [menus]="menus"
           [direction]="layout?.position ?? 'left'"
+          [config]="{ collapsed: state.collapsed(), rtl: layout?.rtl ?? false }"
           (menuItemClicked)="menuItemClicked.emit($event)"
         ></lib-sidebar-menu>
       </cdk-virtual-scroll-viewport>

@@ -11,6 +11,7 @@ export const SIDEBAR_DEFAULT_CONFIG: SidebarConfigModel = {
     profile: true,
     notifications: true,
     messages: true,
+    toggleButton: true,
   },
   theme: {
     mode: 'light',
