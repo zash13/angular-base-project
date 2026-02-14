@@ -32,7 +32,11 @@
     ></div>
   }
 
-  <div class="sidebar-content" [class.cursor-pointer]="state.collapsed()" (click)="onSidebarContentClick()">
+  <div
+    class="sidebar-content"
+    [class.cursor-pointer]="state.collapsed()"
+    (click)="onSidebarContentClick()"
+  >
     <!-- Header -->
     <div class="sidebar-header-container">
       <lib-sidebar-header
@@ -41,10 +45,10 @@
           rtl: layout?.rtl ?? false,
           position: layout?.position ?? 'left',
           toggleButton: showToggleButton,
-          isRtl: isRtl
+          isRtl: isRtl,
         }"
         [logo]="config.branding?.logo ?? null"
-        (toggleSidebar)="toggleSidebar()"
+        (toggleSidebar)="toggle()"
       ></lib-sidebar-header>
     </div>
 

@@ -44,7 +44,7 @@ export class SidebarComponent implements OnChanges {
   @Input() collapsed?: boolean;
 
   @Output() menuItemClicked = new EventEmitter<any>();
-  @Output() sidebarToggled = new EventEmitter<boolean>();
+  @Output() toggleSidebar = new EventEmitter<void>();
   @Output() logoutClicked = new EventEmitter<void>();
   @Output() searchChanged = new EventEmitter<string>();
   @Output() notificationClicked = new EventEmitter<any>();
@@ -52,6 +52,10 @@ export class SidebarComponent implements OnChanges {
   @Output() sidebarToggleRequested = new EventEmitter<void>();
   @Output() collapsedChange = new EventEmitter<boolean>();
 
+  toggle() {
+    console.log('sometihg toggled ');
+    this.toggleSidebar.emit();
+  }
   private _previousCollapsed: boolean | undefined;
 
   constructor(
@@ -64,10 +68,10 @@ export class SidebarComponent implements OnChanges {
     if (changes['overrides']) {
       this.facade.setOverrides(this.overrides ?? {});
     }
-    
+
     const configCollapsed = this.facade.config().layout?.collapsed;
     const inputCollapsed = changes['collapsed']?.currentValue;
-    
+
     if (changes['collapsed'] && inputCollapsed !== undefined) {
       if (inputCollapsed !== this._previousCollapsed) {
         this.state.setCollapsed(inputCollapsed);
@@ -141,23 +145,7 @@ export class SidebarComponent implements OnChanges {
   // state
   // =========================
 
-  toggleSidebar() {
-    const newCollapsed = !this.state.collapsed();
-    this.setCollapsedState(newCollapsed);
-  }
-
-  setCollapsedState(value: boolean) {
-    this.state.setCollapsed(value);
-    this._previousCollapsed = value;
-    this.sidebarToggled.emit(value);
-    this.collapsedChange.emit(value);
-  }
-
-  onSidebarContentClick() {
-    if (this.state.collapsed()) {
-      this.setCollapsedState(false);
-    }
-  }
+  onSidebarContentClick() {}
 
   requestToggle() {
     this.sidebarToggleRequested.emit();
