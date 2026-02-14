@@ -8,23 +8,23 @@ export interface SidebarTheme {
   border: string;
   hover: string;
   active: string;
-  
+
   // Component specific colors
   headerBackground?: string;
   headerText?: string;
   profileBackground?: string;
   searchBackground?: string;
   searchBorder?: string;
-  
+
   // Status colors
   success: string;
   warning: string;
   error: string;
   info: string;
-  
+
   // Shadow colors
   shadowColor: string;
-  
+
   // Animation
   transitionDuration: string;
 }
@@ -48,7 +48,7 @@ export const DEFAULT_DARK_THEME: SidebarTheme = {
   error: '#f44336',
   info: '#2196f3',
   shadowColor: 'rgba(0, 0, 0, 0.3)',
-  transitionDuration: '0.3s'
+  transitionDuration: '0.3s',
 };
 
 export const DEFAULT_LIGHT_THEME: SidebarTheme = {
@@ -70,7 +70,7 @@ export const DEFAULT_LIGHT_THEME: SidebarTheme = {
   error: '#ef4444',
   info: '#3b82f6',
   shadowColor: 'rgba(0, 0, 0, 0.1)',
-  transitionDuration: '0.3s'
+  transitionDuration: '0.3s',
 };
 
 export type SidebarThemePreset = 'dark' | 'light' | 'custom';

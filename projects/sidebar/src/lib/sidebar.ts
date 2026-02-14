@@ -1,52 +1,31 @@
 import {
   Component,
   Input,
+  ChangeDetectionStrategy,
+  OnChanges,
   Output,
   EventEmitter,
-  OnInit,
-  OnDestroy,
-  Inject,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  OnChanges,
-  SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
-// import child components
 import { HeaderComponent } from './internals/header/header';
 import { ProfileComponent } from './internals/profile/profile';
 import { SearchComponent } from './internals/search/search';
 import { MenuComponent as SidebarMenuComponent } from './internals/menu/menu';
 import { FooterComponent } from './internals/footer/footer';
 
-import { SIDEBAR_DATA_SOURCE } from './sidebar-tokens';
-import { SidebarDataSource } from './contracts/sidebar-data-source';
-import { SidebarMaterialModule } from './sidebar-material.module';
-// import interfaces and services
-import {
-  MenuItem,
-  SidebarConfig,
-  UserProfile,
-  LogoConfig,
-  SidebarMessage,
-  SidebarNotification,
-} from './models/sidebar-models';
-import {
-  SidebarTheme,
-  SidebarThemeConfig,
-  SidebarThemePreset,
-  DEFAULT_DARK_THEME,
-  DEFAULT_LIGHT_THEME,
-} from './models/sidebar-theme';
+import { SidebarModel } from './models/sidebar-input-model';
+import { SidebarState } from './state/sidebar-state';
+import { SidebarFacade } from './fecade/sidebar-facade.service';
+import { SidebarThemeService } from './theme/sidebar-theme.service';
 
 @Component({
   selector: 'lib-sidebar',
   standalone: true,
   imports: [
     CommonModule,
-    SidebarMaterialModule,
+    ScrollingModule,
     HeaderComponent,
     ProfileComponent,
     SearchComponent,
@@ -56,118 +35,41 @@ import {
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [SidebarState, SidebarFacade, SidebarThemeService],
 })
-export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
-  private subscriptions = new Subscription();
-  private dataSource: SidebarDataSource;
+export class SidebarComponent implements OnChanges {
+  @Input({ required: true }) model!: SidebarModel;
 
-  @Input() menus: MenuItem[] = [];
-  @Input() config: Partial<SidebarConfig> = {
-    width: 260,
-    collapsedWidth: 80,
-    collapsed: false,
-    animate: true,
-    footerCollapsedMode: 'single',
-    collapsedFooterButton: 'logout',
-  };
-
-  @Input() themeConfig: SidebarThemeConfig = { preset: 'light' };
-  @Input() darkMode?: boolean; // Legacy boolean support
-  @Input() customTheme?: Partial<SidebarTheme>;
-
-  @Input() user!: UserProfile;
-  @Input() logo!: LogoConfig;
-
-  @Input() showSearch = true;
-  @Input() showProfile = true;
-  @Input() showNotifications = true;
-  @Input() showMessages = true;
-
-  @Output() menuItemClicked = new EventEmitter<MenuItem>();
+  @Output() menuItemClicked = new EventEmitter<any>();
   @Output() sidebarToggled = new EventEmitter<boolean>();
   @Output() logoutClicked = new EventEmitter<void>();
   @Output() searchChanged = new EventEmitter<string>();
-  @Output() notificationClicked = new EventEmitter<SidebarNotification>();
-  @Output() messageClicked = new EventEmitter<SidebarMessage>();
+  @Output() notificationClicked = new EventEmitter<any>();
+  @Output() messageClicked = new EventEmitter<any>();
   @Output() sidebarToggleRequested = new EventEmitter<void>();
+
+  constructor(
+    public state: SidebarState,
+    public facade: SidebarFacade,
+    public theme: SidebarThemeService,
+  ) {}
+
+  ngOnChanges() {
+    this.facade.setModel(this.model);
+    this.state.setCollapsed(this.facade.resolvedModel().layout?.collapsed ?? false);
+  }
+
+  toggleSidebar() {
+    this.state.toggle();
+    this.sidebarToggled.emit(this.state.collapsed());
+  }
 
   requestToggle() {
     this.sidebarToggleRequested.emit();
   }
-  searchText: string = '';
-
-  isMobile = false;
-  notifications: SidebarNotification[] = [];
-  messages: SidebarMessage[] = [];
-
-  unreadNotificationsCount = 0;
-  unreadMessagesCount = 0;
-  constructor(
-    @Inject(SIDEBAR_DATA_SOURCE) private _dataSource: SidebarDataSource,
-    private cdr: ChangeDetectorRef,
-  ) {
-    this.dataSource = _dataSource;
-  }
-
-  // ---------------- lifecycle ----------------
-
-  ngOnInit() {
-    this.checkMobile();
-    this.loadData();
-    this.config = {
-      footerCollapsedMode: 'all',
-      collapsedFooterButton: 'logout',
-      ...this.config,
-    };
-    this.applyTheme();
-  }
-
-  ngOnDestroy() {
-    this.subscriptions.unsubscribe();
-  }
-
-  // ---------------- data ----------------
-
-  private loadData() {
-    // menus are OPTIONAL input
-    if (!this.menus.length) {
-      this.subscriptions.add(this.dataSource.menus().subscribe((menus) => (this.menus = menus)));
-    }
-
-    this.subscriptions.add(
-      this.dataSource.notifications().subscribe((n) => {
-        this.notifications = n;
-        this.updateUnreadCounts();
-      }),
-    );
-
-    this.subscriptions.add(
-      this.dataSource.messages().subscribe((m) => {
-        this.messages = m;
-        this.updateUnreadCounts();
-      }),
-    );
-  }
-
-  // ---------------- UI actions ----------------
-
-  toggleSidebar() {
-    console.log('sidebarToggled');
-    this.config.collapsed = !this.config.collapsed;
-    this.sidebarToggled.emit(this.config.collapsed);
-  }
-
-  onNotificationClick(notification: SidebarNotification) {
-    this.notificationClicked.emit(notification);
-    this.dataSource.markNotificationAsRead(notification.id.toString());
-  }
-
-  onMessageClick(message: SidebarMessage) {
-    this.messageClicked.emit(message);
-    this.dataSource.markMessageAsRead(message.id.toString());
-  }
 
   onSearch(value: string) {
+    this.state.setSearch(value);
     this.searchChanged.emit(value);
   }
 
@@ -175,107 +77,75 @@ export class SidebarComponent implements OnInit, OnDestroy, OnChanges {
     this.logoutClicked.emit();
   }
 
-  // ---------------- helpers ----------------
-
-  private updateUnreadCounts() {
-    this.unreadNotificationsCount = this.notifications.filter((n) => !n.read).length;
-    this.unreadMessagesCount = this.messages.filter((m) => !m.read).length;
+  get resolvedModel() {
+    return this.facade.resolvedModel();
   }
 
-  private checkMobile() {
-    this.isMobile = window.innerWidth < 768;
-    if (this.isMobile) {
-      this.config.collapsed = true;
-    }
+  get config() {
+    return {
+      ...this.resolvedModel.layout,
+      collapsed: this.state.collapsed(),
+      backdropOpacity: 0.5,
+      backgroundImage: undefined,
+      backdrop: this.resolvedModel.layout?.backdrop ?? false,
+    };
   }
 
-  get sidebarWidth() {
-    return this.config.collapsed
-      ? `${this.config.collapsedWidth ?? 80}px`
-      : `${this.config.width ?? 260}px`;
+  get currentTheme() {
+    return this.theme.theme();
+  }
+
+  getThemeCssVariables() {
+    return this.theme.cssVariables();
   }
 
   getFooterConfig() {
     return {
-      collapsed: this.config?.collapsed ?? false,
-      footerCollapsedMode: this.config?.footerCollapsedMode ?? 'all',
-      collapsedFooterButton: this.config?.collapsedFooterButton ?? 'logout',
-      rtl: this.config?.rtl ?? false,
-      position: this.config?.position ?? 'left',
+      collapsed: this.state.collapsed(),
+      footerCollapsedMode: this.resolvedModel.features?.footerMode ?? 'all',
+      collapsedFooterButton: this.resolvedModel.features?.collapsedFooterButton ?? 'logout',
+      rtl: this.resolvedModel.layout?.rtl ?? false,
+      position: this.resolvedModel.layout?.position ?? 'left',
     };
   }
 
-  // ---------------- Theme Management ----------------
-
-  private _currentTheme: SidebarTheme = DEFAULT_LIGHT_THEME;
-
-  get currentTheme(): SidebarTheme {
-    return this._currentTheme;
+  get showProfile(): boolean {
+    return this.resolvedModel.features?.profile ?? true;
   }
 
-  private applyTheme() {
-    // Determine which theme to use
-    if (this.darkMode !== undefined) {
-      // Legacy boolean support
-      this._currentTheme = this.darkMode ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
-    } else if (this.themeConfig?.darkMode !== undefined) {
-      // Config-based boolean support
-      this._currentTheme = this.themeConfig.darkMode ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
-    } else if (this.themeConfig?.preset) {
-      // Preset-based support
-      this._currentTheme =
-        this.themeConfig.preset === 'light' ? DEFAULT_LIGHT_THEME : DEFAULT_DARK_THEME;
-    } else {
-      // Default to light theme
-      this._currentTheme = DEFAULT_LIGHT_THEME;
-    }
-
-    // Apply custom theme overrides if provided
-    if (this.themeConfig?.customTheme || this.customTheme) {
-      this._currentTheme = {
-        ...this._currentTheme,
-        ...this.themeConfig?.customTheme,
-        ...this.customTheme,
-      };
-    }
+  get showSearch(): boolean {
+    return !(this.resolvedModel.features?.search ?? true);
   }
 
-  getThemeCssVariables(): { [key: string]: string } {
-    return {
-      '--sidebar-background': this._currentTheme.background,
-      '--sidebar-surface': this._currentTheme.surface,
-      '--sidebar-primary': this._currentTheme.primary,
-      '--sidebar-text': this._currentTheme.text,
-      '--sidebar-text-secondary': this._currentTheme.textSecondary,
-      '--sidebar-border': this._currentTheme.border,
-      '--sidebar-hover': this._currentTheme.hover,
-      '--sidebar-active': this._currentTheme.active,
-      '--sidebar-header-background':
-        this._currentTheme.headerBackground || this._currentTheme.background,
-      '--sidebar-header-text': this._currentTheme.headerText || this._currentTheme.textSecondary,
-      '--sidebar-profile-background':
-        this._currentTheme.profileBackground || this._currentTheme.surface,
-      '--sidebar-search-background': this._currentTheme.searchBackground || 'transparent',
-      '--sidebar-search-border': this._currentTheme.searchBorder || this._currentTheme.border,
-      '--sidebar-success': this._currentTheme.success,
-      '--sidebar-warning': this._currentTheme.warning,
-      '--sidebar-error': this._currentTheme.error,
-      '--sidebar-info': this._currentTheme.info,
-      '--sidebar-shadow-color': this._currentTheme.shadowColor,
-      '--sidebar-transition-duration': this._currentTheme.transitionDuration,
-    };
+  get user() {
+    return this.resolvedModel.user;
   }
 
-  // Update theme dynamically
-  updateTheme(themeConfig: Partial<SidebarThemeConfig>) {
-    this.themeConfig = { ...this.themeConfig, ...themeConfig };
-    this.applyTheme();
-    this.cdr.markForCheck();
+  get menus() {
+    return this.resolvedModel.data?.menus ?? [];
   }
 
-  // Trigger change detection when theme inputs change
-  ngOnChanges() {
-    this.applyTheme();
-    this.cdr.markForCheck();
+  get notifications() {
+    return this.resolvedModel.data?.notifications ?? [];
+  }
+
+  get messages() {
+    return this.resolvedModel.data?.messages ?? [];
+  }
+
+  get unreadNotificationsCount(): number {
+    return this.notifications.filter((n: any) => !n.read).length;
+  }
+
+  get unreadMessagesCount(): number {
+    return this.messages.filter((m: any) => !m.read).length;
+  }
+
+  get isMobile() {
+    return this.state.isMobile();
+  }
+
+  get searchText() {
+    return this.state.searchText();
   }
 }
