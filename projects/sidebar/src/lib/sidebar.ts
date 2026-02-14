@@ -15,10 +15,10 @@ import { SearchComponent } from './internals/search/search';
 import { MenuComponent as SidebarMenuComponent } from './internals/menu/menu';
 import { FooterComponent } from './internals/footer/footer';
 
-import { SidebarModel } from './models/sidebar-input-model';
 import { SidebarState } from './state/sidebar-state';
-import { SidebarFacade } from './fecade/sidebar-facade.service';
 import { SidebarThemeService } from './theme/sidebar-theme.service';
+import { SidebarConfigModel } from './models/sidebar-input-model';
+import { SidebarFacade } from './fecade/sidebar-facade.service';
 
 @Component({
   selector: 'lib-sidebar',
@@ -35,10 +35,12 @@ import { SidebarThemeService } from './theme/sidebar-theme.service';
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [SidebarState, SidebarFacade, SidebarThemeService],
+
+  // Only keep state local
+  providers: [SidebarState],
 })
 export class SidebarComponent implements OnChanges {
-  @Input({ required: true }) model!: SidebarModel;
+  @Input() overrides?: Partial<SidebarConfigModel>;
 
   @Output() menuItemClicked = new EventEmitter<any>();
   @Output() sidebarToggled = new EventEmitter<boolean>();
@@ -51,13 +53,73 @@ export class SidebarComponent implements OnChanges {
   constructor(
     public state: SidebarState,
     public facade: SidebarFacade,
-    public theme: SidebarThemeService,
+    public themeService: SidebarThemeService,
   ) {}
 
   ngOnChanges() {
-    this.facade.setModel(this.model);
-    this.state.setCollapsed(this.facade.resolvedModel().layout?.collapsed ?? false);
+    this.facade.setOverrides(this.overrides ?? {});
+    this.state.setCollapsed(this.facade.config().layout?.collapsed ?? false);
   }
+
+  // =========================
+  // config
+  // =========================
+
+  get config() {
+    return this.facade.config();
+  }
+
+  get layout() {
+    return this.config.layout;
+  }
+
+  get features() {
+    return this.config.features;
+  }
+
+  get user() {
+    return this.config.user;
+  }
+
+  // =========================
+  // data (from datasource)
+  // =========================
+
+  get menus() {
+    return this.facade.data().menus;
+  }
+
+  get notifications() {
+    return this.facade.data().notifications;
+  }
+
+  get messages() {
+    return this.facade.data().messages;
+  }
+
+  get unreadNotificationsCount(): number {
+    return this.notifications.filter((n: any) => !n.read).length;
+  }
+
+  get unreadMessagesCount(): number {
+    return this.messages.filter((m: any) => !m.read).length;
+  }
+
+  // =========================
+  // theme
+  // =========================
+
+  get currentTheme() {
+    return this.themeService.theme();
+  }
+
+  getThemeCssVariables() {
+    return this.themeService.cssVariables();
+  }
+
+  // =========================
+  // state
+  // =========================
 
   toggleSidebar() {
     this.state.toggle();
@@ -77,75 +139,29 @@ export class SidebarComponent implements OnChanges {
     this.logoutClicked.emit();
   }
 
-  get resolvedModel() {
-    return this.facade.resolvedModel();
-  }
-
-  get config() {
-    return {
-      ...this.resolvedModel.layout,
-      collapsed: this.state.collapsed(),
-      backdropOpacity: 0.5,
-      backgroundImage: undefined,
-      backdrop: this.resolvedModel.layout?.backdrop ?? false,
-    };
-  }
-
-  get currentTheme() {
-    return this.theme.theme();
-  }
-
-  getThemeCssVariables() {
-    return this.theme.cssVariables();
-  }
-
-  getFooterConfig() {
-    return {
-      collapsed: this.state.collapsed(),
-      footerCollapsedMode: this.resolvedModel.features?.footerMode ?? 'all',
-      collapsedFooterButton: this.resolvedModel.features?.collapsedFooterButton ?? 'logout',
-      rtl: this.resolvedModel.layout?.rtl ?? false,
-      position: this.resolvedModel.layout?.position ?? 'left',
-    };
-  }
-
-  get showProfile(): boolean {
-    return this.resolvedModel.features?.profile ?? true;
-  }
-
-  get showSearch(): boolean {
-    return !(this.resolvedModel.features?.search ?? true);
-  }
-
-  get user() {
-    return this.resolvedModel.user;
-  }
-
-  get menus() {
-    return this.resolvedModel.data?.menus ?? [];
-  }
-
-  get notifications() {
-    return this.resolvedModel.data?.notifications ?? [];
-  }
-
-  get messages() {
-    return this.resolvedModel.data?.messages ?? [];
-  }
-
-  get unreadNotificationsCount(): number {
-    return this.notifications.filter((n: any) => !n.read).length;
-  }
-
-  get unreadMessagesCount(): number {
-    return this.messages.filter((m: any) => !m.read).length;
-  }
-
   get isMobile() {
     return this.state.isMobile();
   }
 
   get searchText() {
     return this.state.searchText();
+  }
+
+  get showProfile(): boolean {
+    return this.features?.profile ?? true;
+  }
+
+  get showSearch(): boolean {
+    return this.features?.search ?? true;
+  }
+
+  getFooterConfig() {
+    return {
+      collapsed: this.state.collapsed(),
+      footerCollapsedMode: this.features?.footerMode ?? 'all',
+      collapsedFooterButton: this.features?.collapsedFooterButton ?? 'logout',
+      rtl: this.layout?.rtl ?? false,
+      position: this.layout?.position ?? 'left',
+    };
   }
 }

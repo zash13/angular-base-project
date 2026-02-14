@@ -1,25 +1,40 @@
-import { Injectable, Inject, computed, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { merge } from 'lodash-es';
-import { SidebarModel } from '../models/sidebar-input-model';
-import { SIDEBAR_GLOBAL_OPTIONS, SIDEBAR_DEFAULT_OPTIONS } from '../tokens/sidebar-options.token';
+import { MenuItem, SidebarNotification, SidebarMessage } from '../models/sidebar-models';
+import { SidebarConfigModel } from '../models/sidebar-input-model';
+import { SIDEBAR_DEFAULT_CONFIG } from '../models/sidebar-defaults';
+import { SIDEBAR_CONFIG, SIDEBAR_DATA_SOURCE } from '../tokens/sidebar-options.token';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class SidebarFacade {
-  private inputModel = signal<SidebarModel | null>(null);
+  private globalConfig = inject(SIDEBAR_CONFIG, { optional: true });
+  private dataSource = inject(SIDEBAR_DATA_SOURCE, { optional: true });
 
-  constructor(
-    @Inject(SIDEBAR_GLOBAL_OPTIONS)
-    private globalOptions: SidebarModel | null,
-  ) {}
+  private overrides = signal<Partial<SidebarConfigModel>>({});
 
-  setModel(model: SidebarModel) {
-    this.inputModel.set(model);
+  private menus = signal<MenuItem[]>([]);
+  private notifications = signal<SidebarNotification[]>([]);
+  private messages = signal<SidebarMessage[]>([]);
+
+  constructor() {
+    if (this.dataSource) {
+      this.dataSource.menus().subscribe((m) => this.menus.set(m ?? []));
+      this.dataSource.notifications().subscribe((n) => this.notifications.set(n ?? []));
+      this.dataSource.messages().subscribe((msg) => this.messages.set(msg ?? []));
+    }
   }
 
-  readonly resolvedModel = computed(() => {
-    const model = this.inputModel();
-    if (!model) return SIDEBAR_DEFAULT_OPTIONS;
+  setOverrides(config: Partial<SidebarConfigModel>) {
+    this.overrides.set(config ?? {});
+  }
 
-    return merge({}, SIDEBAR_DEFAULT_OPTIONS, this.globalOptions ?? {}, model);
+  readonly config = computed<SidebarConfigModel>(() => {
+    return merge({}, SIDEBAR_DEFAULT_CONFIG, this.globalConfig ?? {}, this.overrides());
   });
+
+  readonly data = computed(() => ({
+    menus: this.menus(),
+    notifications: this.notifications(),
+    messages: this.messages(),
+  }));
 }

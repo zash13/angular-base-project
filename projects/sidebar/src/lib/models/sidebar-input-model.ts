@@ -1,29 +1,17 @@
-import {
-  LogoConfig,
-  MenuItem,
-  SidebarMessage,
-  SidebarNotification,
-  UserProfile,
-} from './sidebar-models';
+import { LogoConfig, UserProfile } from './sidebar-models';
 import { SidebarTheme } from './sidebar-theme';
 
-export interface SidebarModel {
+export interface SidebarConfigModel {
   layout?: SidebarLayoutOptions;
   features?: SidebarFeatureOptions;
   branding?: SidebarBranding;
   user?: UserProfile;
-  data?: SidebarData;
   theme?: SidebarThemeOptions;
 }
 
 export interface SidebarThemeOptions {
   mode?: 'light' | 'dark' | 'auto';
   custom?: Partial<SidebarTheme>;
-}
-export interface SidebarData {
-  menus: MenuItem[];
-  notifications?: SidebarNotification[];
-  messages?: SidebarMessage[];
 }
 export interface SidebarBranding {
   logo?: LogoConfig;
