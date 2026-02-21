@@ -1,8 +1,18 @@
+<<<<<<< Updated upstream
 <div class="sidebar-footer" [attr.dir]="config?.rtl ? 'rtl' : 'ltr'">
   <div class="footer-actions" [ngClass]="config?.rtl ? 'items-start justify-start' : 'items-start justify-start'">
     <!-- Notifications -->
     @if (shouldShowButton('notifications')) {
       <div class="relative">
+=======
+<div class="sidebar-footer flex min-h-16 border-t" [attr.dir]="config?.rtl ? 'rtl' : 'ltr'">
+  <div
+    class="footer-actions flex w-full items-center justify-between gap-3 px-4 py-4"
+    [ngClass]="config?.rtl ? 'direction-rtl' : ''"
+  >
+    @if (isFooterItemVisible('notifications') && shouldShowButton('notifications')) {
+      <div class="footer-item relative flex-1 flex items-center justify-center">
+>>>>>>> Stashed changes
         <button
           type="button"
           class="notification-btn footer-btn"
@@ -39,9 +49,14 @@
       </div>
     }
 
+<<<<<<< Updated upstream
     <!-- Messages -->
     @if (shouldShowButton('messages')) {
       <div class="relative">
+=======
+    @if (isFooterItemVisible('messages') && shouldShowButton('messages')) {
+      <div class="footer-item relative flex-1 flex items-center justify-center">
+>>>>>>> Stashed changes
         <button
           type="button"
           class="messages-btn footer-btn"
@@ -78,9 +93,14 @@
       </div>
     }
 
+<<<<<<< Updated upstream
     <!-- Settings -->
     @if (shouldShowButton('settings')) {
       <div class="relative">
+=======
+    @if (isFooterItemVisible('settings') && shouldShowButton('settings')) {
+      <div class="footer-item relative flex-1 flex items-center justify-center">
+>>>>>>> Stashed changes
         <button
           type="button"
           class="settings-btn footer-btn"
@@ -113,9 +133,14 @@
       </div>
     }
 
+<<<<<<< Updated upstream
     <!-- Logout -->
     @if (shouldShowButton('logout')) {
       <div>
+=======
+    @if (isFooterItemVisible('logout') && shouldShowButton('logout')) {
+      <div class="footer-item flex-1 flex items-center justify-center">
+>>>>>>> Stashed changes
         <button
           type="button"
           class="logout-btn footer-btn"

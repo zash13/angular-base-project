@@ -7,3 +7,8 @@ export interface NavbarLogo {
   collapsedIcon?: string;
   collapsedImage?: string;
 }
+
+export interface ToggleButtonIcons {
+  expand?: string;
+  collapse?: string;
+}

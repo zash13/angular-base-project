@@ -189,6 +189,7 @@ export class SidebarComponent implements OnChanges {
       collapsed: this.state.collapsed(),
       footerCollapsedMode: this.features?.footerMode ?? 'all',
       collapsedFooterButton: this.features?.collapsedFooterButton ?? 'logout',
+      footerItems: this.features?.footerItems,
       rtl: this.layout?.rtl ?? false,
       position: this.layout?.position ?? 'left',
     };
