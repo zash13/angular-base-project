@@ -39,7 +39,7 @@ export const DEFAULT_DARK_THEME: SidebarTheme = {
 
   border: '#1f2937',
 
-  hover: 'rgba(129, 140, 248, 0.12)',
+  hover: '#1f2937', // solid color
   active: 'rgba(129, 140, 248, 0.22)',
 
   headerBackground: '#020617', // darker than body = depth
@@ -69,7 +69,7 @@ export const DEFAULT_LIGHT_THEME: SidebarTheme = {
 
   border: '#e5e7eb',
 
-  hover: 'rgba(99, 102, 241, 0.08)',
+  hover: '#1f2937',
   active: 'rgba(99, 102, 241, 0.16)',
 
   headerBackground: '#ffffff',

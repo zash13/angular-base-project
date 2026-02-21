@@ -54,14 +54,15 @@
             @if (menu.badge && !config?.collapsed) {
               <span
                 class="menu-badge rounded-full px-2 py-0.5 text-xs font-medium"
-                [ngClass]="[
-                  isRtl ? 'mr-auto' : 'ml-auto',
-                  menu.badge.class === 'badge-danger' && 'bg-red-100 text-red-800',
-                  menu.badge.class === 'badge-success' && 'bg-green-100 text-green-800',
-                  menu.badge.class === 'badge-warning' && 'bg-yellow-100 text-yellow-800',
-                  (menu.badge.class === 'badge-info' || menu.badge.class === 'badge-primary') &&
-                    'bg-blue-100 text-blue-800',
-                ]"
+                [ngClass]="{
+                  'mr-auto': isRtl,
+                  'ml-auto': !isRtl,
+                  'bg-red-100 text-red-800': menu.badge.class === 'badge-danger',
+                  'bg-green-100 text-green-800': menu.badge.class === 'badge-success',
+                  'bg-yellow-100 text-yellow-800': menu.badge.class === 'badge-warning',
+                  'bg-blue-100 text-blue-800':
+                    menu.badge.class === 'badge-info' || menu.badge.class === 'badge-primary',
+                }"
               >
                 {{ menu.badge.text }}
               </span>

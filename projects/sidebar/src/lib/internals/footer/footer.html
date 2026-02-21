@@ -1,16 +1,18 @@
-<div class="sidebar-footer" [attr.dir]="config?.rtl ? 'rtl' : 'ltr'">
-  <div class="footer-actions" [ngClass]="config?.rtl ? 'items-start justify-start' : 'items-start justify-start'">
-    <!-- Notifications -->
+<div class="sidebar-footer flex min-h-16 border-t" [attr.dir]="config?.rtl ? 'rtl' : 'ltr'">
+  <div
+    class="footer-actions flex w-full items-center justify-between gap-3 px-4 py-4"
+    [ngClass]="config?.rtl ? 'direction-rtl' : ''"
+  >
     @if (shouldShowButton('notifications')) {
-      <div class="relative">
+      <div class="footer-item relative flex-1 flex items-center justify-center">
         <button
           type="button"
-          class="notification-btn footer-btn"
+          class="notification-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200 w-14 h-14 min-w-14"
           [class.collapsed]="isCollapsed"
           (click)="toggleNotifications()"
           [title]="isCollapsed ? 'Notifications' : ''"
         >
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -21,35 +23,71 @@
 
           @if (unreadNotificationsCount > 0 && !isCollapsed) {
             <span
-              class="notification-badge absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-medium shadow-sm"
-              [style.background-color]="config?.rtl ? 'var(--sidebar-error)' : 'var(--sidebar-error)'"
-              [style.color]="'white'"
+              class="notification-badge absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-sm font-semibold shadow-md"
             >
               {{ unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount }}
             </span>
           }
         </button>
 
-        <!-- Notifications Dropdown -->
         @if (showNotifications) {
-          <div class="notifications-dropdown">
-            <!-- ... keep existing dropdown content ... -->
+          <div
+            class="dropdown-panel notifications-dropdown absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 rounded-xl shadow-2xl z-[9999]"
+          >
+            <div
+              class="dropdown-header flex items-center justify-between px-5 py-4 text-base font-semibold"
+            >
+              <span>Notifications</span>
+              @if (unreadNotificationsCount > 0) {
+                <span class="badge text-sm px-3 py-1 rounded-full">
+                  {{ unreadNotificationsCount }}
+                </span>
+              }
+            </div>
+
+            <div class="dropdown-content max-h-64 overflow-y-auto">
+              @if (notifications.length > 0) {
+                @for (notification of notifications; track notification.id) {
+                  <div
+                    class="dropdown-item flex flex-col px-5 py-3 cursor-pointer"
+                    (click)="onNotificationClick(notification)"
+                  >
+                    <span class="item-text text-base font-medium">
+                      {{ notification.title }}
+                    </span>
+                    <span class="item-time text-sm mt-1">
+                      {{ notification.time }}
+                    </span>
+                  </div>
+                }
+              } @else {
+                <div class="empty-state px-5 py-6 text-center text-base">No notifications</div>
+              }
+            </div>
+
+            @if (notifications.length > 0) {
+              <div
+                class="dropdown-footer px-5 py-4 text-center text-base font-medium cursor-pointer"
+                (click)="viewAllNotifications()"
+              >
+                View all notifications
+              </div>
+            }
           </div>
         }
       </div>
     }
 
-    <!-- Messages -->
     @if (shouldShowButton('messages')) {
-      <div class="relative">
+      <div class="footer-item relative flex-1 flex items-center justify-center">
         <button
           type="button"
-          class="messages-btn footer-btn"
+          class="messages-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200 w-14 h-14 min-w-14"
           [class.collapsed]="isCollapsed"
           (click)="toggleMessages()"
           [title]="isCollapsed ? 'Messages' : ''"
         >
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -60,75 +98,132 @@
 
           @if (unreadMessagesCount > 0 && !isCollapsed) {
             <span
-              class="messages-badge absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-medium shadow-sm"
-              [style.background-color]="config?.rtl ? 'var(--sidebar-info)' : 'var(--sidebar-info)'"
-              [style.color]="'white'"
+              class="messages-badge absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-sm font-semibold shadow-md"
             >
               {{ unreadMessagesCount > 99 ? '99+' : unreadMessagesCount }}
             </span>
           }
         </button>
 
-        <!-- Messages Dropdown -->
         @if (showMessages) {
-          <div class="messages-dropdown">
-            <!-- ... keep existing dropdown content ... -->
+          <div
+            class="dropdown-panel messages-dropdown absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 rounded-xl shadow-2xl z-[9999]"
+          >
+            <div
+              class="dropdown-header flex items-center justify-between px-5 py-4 text-base font-semibold"
+            >
+              <span>Messages</span>
+              @if (unreadMessagesCount > 0) {
+                <span class="badge info text-sm px-3 py-1 rounded-full">
+                  {{ unreadMessagesCount }}
+                </span>
+              }
+            </div>
+
+            <div class="dropdown-content max-h-64 overflow-y-auto">
+              @if (messages.length > 0) {
+                @for (message of messages; track message.id) {
+                  <div
+                    class="dropdown-item flex flex-col px-5 py-3 cursor-pointer"
+                    (click)="onMessageClick(message)"
+                  >
+                    <span class="item-text text-base font-medium">
+                      {{ message.message }}
+                    </span>
+                    <span class="item-time text-sm mt-1">
+                      {{ message.time }}
+                    </span>
+                  </div>
+                }
+              } @else {
+                <div class="empty-state px-5 py-6 text-center text-base">No messages</div>
+              }
+            </div>
+
+            @if (messages.length > 0) {
+              <div
+                class="dropdown-footer px-5 py-4 text-center text-base font-medium cursor-pointer transition-colors"
+                (click)="viewAllMessages()"
+              >
+                View all messages
+              </div>
+            }
           </div>
         }
       </div>
     }
 
-    <!-- Settings -->
     @if (shouldShowButton('settings')) {
-      <div class="relative">
+      <div class="footer-item relative flex-1 flex items-center justify-center">
         <button
           type="button"
-          class="settings-btn footer-btn"
+          class="settings-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200 w-14 h-14 min-w-14"
           [class.collapsed]="isCollapsed"
           (click)="toggleSettings()"
           [title]="isCollapsed ? 'Settings' : ''"
         >
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-            />
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0
+       a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37
+       a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35
+       a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37
+       a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0
+       a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37
+       a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35
+       a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37
+       .996.608 2.296.07 2.572-1.065z"
             />
           </svg>
         </button>
 
-        <!-- Settings Dropdown -->
         @if (showSettings) {
-          <div class="settings-dropdown">
-            <!-- ... keep existing dropdown content ... -->
+          <div
+            class="dropdown-panel settings-dropdown absolute bottom-full left-1/2 -translate-x-1/2 mb-6 w-64 h-48 rounded-xl shadow-2xl"
+          >
+            <ul class="dropdown-list py-3">
+              <li
+                class="dropdown-item px-5 py-3 text-base font-medium cursor-pointer"
+                (click)="navigateToProfile()"
+              >
+                Profile
+              </li>
+              <li
+                class="dropdown-item px-5 py-3 text-base font-medium cursor-pointer"
+                (click)="openSettings()"
+              >
+                Settings
+              </li>
+              <li
+                class="dropdown-item px-5 py-3 text-base font-medium cursor-pointer"
+                (click)="openHelp()"
+              >
+                Help
+              </li>
+            </ul>
           </div>
         }
       </div>
     }
 
-    <!-- Logout -->
     @if (shouldShowButton('logout')) {
-      <div>
+      <div class="footer-item flex-1 flex items-center justify-center">
         <button
           type="button"
-          class="logout-btn footer-btn"
+          class="logout-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200 w-14 h-14 min-w-14"
           [class.collapsed]="isCollapsed"
           (click)="onLogout()"
           [title]="isCollapsed ? 'Logout' : ''"
         >
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              d="M17 16l4-4m0 0l-4-4m4 4H7"
             />
           </svg>
         </button>

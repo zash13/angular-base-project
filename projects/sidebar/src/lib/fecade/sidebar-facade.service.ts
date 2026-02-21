@@ -18,9 +18,16 @@ export class SidebarFacade {
 
   constructor() {
     if (this.dataSource) {
-      this.dataSource.menus().subscribe((m) => this.menus.set(m ?? []));
-      this.dataSource.notifications().subscribe((n) => this.notifications.set(n ?? []));
-      this.dataSource.messages().subscribe((msg) => this.messages.set(msg ?? []));
+      this.dataSource.menus().subscribe((m) => {
+        console.log('Menus loaded', m); // Ensure full menus are loaded
+        this.menus.set(m ?? []);
+      });
+      this.dataSource.notifications().subscribe((n) => {
+        this.notifications.set(n ?? []);
+      });
+      this.dataSource.messages().subscribe((msg) => {
+        this.messages.set(msg ?? []);
+      });
     }
   }
 

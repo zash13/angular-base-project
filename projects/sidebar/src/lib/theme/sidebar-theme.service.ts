@@ -27,6 +27,7 @@ export class SidebarThemeService {
       '--sidebar-primary': t.primary,
       '--sidebar-text': t.text,
       '--sidebar-border': t.border,
+      '--sidebar-font-family': 'var(--app-font-family, "Vazirmatn", Tahoma, sans-serif)',
     };
   });
 }
