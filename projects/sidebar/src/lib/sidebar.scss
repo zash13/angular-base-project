@@ -1,4 +1,7 @@
 @use './styles/theme';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 // Additional component-specific styles that use the theme variables
 .sidebar {
