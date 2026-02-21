@@ -12,6 +12,7 @@ interface HeaderConfig extends Partial<SidebarConfig> {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './header.html',
+  styleUrls: ['./header.scss'],
 })
 export class HeaderComponent {
   @Input() config: HeaderConfig = {};

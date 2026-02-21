@@ -7,8 +7,8 @@
       <div class="footer-item relative flex-1 flex items-center justify-center">
         <button
           type="button"
-          class="notification-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200 w-14 h-14 min-w-14"
-          [class.collapsed]="isCollapsed"
+          class="notification-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200"
+          [ngClass]="isCollapsed ? 'w-10 h-10 min-w-10' : 'w-14 h-14 min-w-14'"
           (click)="toggleNotifications()"
           [title]="isCollapsed ? 'Notifications' : ''"
         >
@@ -82,8 +82,8 @@
       <div class="footer-item relative flex-1 flex items-center justify-center">
         <button
           type="button"
-          class="messages-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200 w-14 h-14 min-w-14"
-          [class.collapsed]="isCollapsed"
+          class="messages-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200"
+          [ngClass]="isCollapsed ? 'w-10 h-10 min-w-10' : 'w-14 h-14 min-w-14'"
           (click)="toggleMessages()"
           [title]="isCollapsed ? 'Messages' : ''"
         >
@@ -157,8 +157,8 @@
       <div class="footer-item relative flex-1 flex items-center justify-center">
         <button
           type="button"
-          class="settings-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200 w-14 h-14 min-w-14"
-          [class.collapsed]="isCollapsed"
+          class="settings-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200"
+          [ngClass]="isCollapsed ? 'w-10 h-10 min-w-10' : 'w-14 h-14 min-w-14'"
           (click)="toggleSettings()"
           [title]="isCollapsed ? 'Settings' : ''"
         >
@@ -213,8 +213,8 @@
       <div class="footer-item flex-1 flex items-center justify-center">
         <button
           type="button"
-          class="logout-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200 w-14 h-14 min-w-14"
-          [class.collapsed]="isCollapsed"
+          class="logout-btn footer-btn flex items-center justify-center rounded-full transition-all duration-200"
+          [ngClass]="isCollapsed ? 'w-10 h-10 min-w-10' : 'w-14 h-14 min-w-14'"
           (click)="onLogout()"
           [title]="isCollapsed ? 'Logout' : ''"
         >
