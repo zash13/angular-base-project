@@ -19,6 +19,8 @@ export interface MenuItem {
   permissions?: string[];
   order?: number;
 }
+export type FooterItem = 'notifications' | 'messages' | 'settings' | 'logout';
+
 export interface SidebarConfig {
   width: number;
   collapsedWidth: number;
@@ -34,6 +36,7 @@ export interface SidebarConfig {
   backgroundImage?: string;
   footerCollapsedMode?: 'all' | 'single' | 'none';
   collapsedFooterButton?: 'notifications' | 'messages' | 'settings' | 'logout';
+  footerItems?: FooterItem[];
 }
 
 export interface LogoConfig {
@@ -44,6 +47,11 @@ export interface LogoConfig {
   iconType?: 'string' | 'mat-icon' | 'image';
   collapsedIcon?: string;
   collapsedImage?: string;
+}
+
+export interface ToggleButtonIcons {
+  expand?: string;   // icon shown when collapsed (click to expand)
+  collapse?: string; // icon shown when expanded (click to collapse)
 }
 
 export interface UserProfile {

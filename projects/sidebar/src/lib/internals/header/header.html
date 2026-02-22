@@ -71,17 +71,9 @@
         title="{{ config?.collapsed ? 'Expand sidebar' : 'Collapse sidebar' }}"
       >
         @if (config?.collapsed) {
-          @if (isRtl) {
-            <span class="material-icons text-lg">chevron_left</span>
-          } @else {
-            <span class="material-icons text-lg">chevron_right</span>
-          }
+          <span class="material-icons text-lg">{{ expandIcon }}</span>
         } @else {
-          @if (isRtl) {
-            <span class="material-icons text-lg">chevron_right</span>
-          } @else {
-            <span class="material-icons text-lg">chevron_left</span>
-          }
+          <span class="material-icons text-lg">{{ collapseIcon }}</span>
         }
       </button>
     }

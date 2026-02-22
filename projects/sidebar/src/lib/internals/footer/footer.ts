@@ -6,7 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { SidebarNotification, SidebarMessage, SidebarConfig } from '../../models/sidebar-models';
+import { SidebarNotification, SidebarMessage, SidebarConfig, FooterItem } from '../../models/sidebar-models';
 @Component({
   selector: 'lib-sidebar-footer',
   standalone: true,
@@ -44,6 +44,19 @@ export class FooterComponent {
 
   get showButton(): 'notifications' | 'messages' | 'settings' | 'logout' {
     return this.config.collapsedFooterButton || 'logout';
+  }
+
+  get visibleFooterItems(): FooterItem[] {
+    const defaultItems: FooterItem[] = ['notifications', 'messages', 'settings', 'logout'];
+    const configured = this.config.footerItems;
+    if (!configured || configured.length === 0) {
+      return defaultItems;
+    }
+    return configured;
+  }
+
+  isFooterItemVisible(item: FooterItem): boolean {
+    return this.visibleFooterItems.includes(item);
   }
 
   shouldShowButton(buttonType: string): boolean {

@@ -3,7 +3,7 @@
     class="footer-actions flex w-full items-center justify-between gap-3 px-4 py-4"
     [ngClass]="config?.rtl ? 'direction-rtl' : ''"
   >
-    @if (shouldShowButton('notifications')) {
+    @if (isFooterItemVisible('notifications') && shouldShowButton('notifications')) {
       <div class="footer-item relative flex-1 flex items-center justify-center">
         <button
           type="button"
@@ -78,7 +78,7 @@
       </div>
     }
 
-    @if (shouldShowButton('messages')) {
+    @if (isFooterItemVisible('messages') && shouldShowButton('messages')) {
       <div class="footer-item relative flex-1 flex items-center justify-center">
         <button
           type="button"
@@ -153,7 +153,7 @@
       </div>
     }
 
-    @if (shouldShowButton('settings')) {
+    @if (isFooterItemVisible('settings') && shouldShowButton('settings')) {
       <div class="footer-item relative flex-1 flex items-center justify-center">
         <button
           type="button"
@@ -209,7 +209,7 @@
       </div>
     }
 
-    @if (shouldShowButton('logout')) {
+    @if (isFooterItemVisible('logout') && shouldShowButton('logout')) {
       <div class="footer-item flex-1 flex items-center justify-center">
         <button
           type="button"
