@@ -1,4 +1,4 @@
-import { LogoConfig, UserProfile } from './sidebar-models';
+import { LogoConfig, UserProfile, FooterItem, ToggleButtonIcons } from './sidebar-models';
 import { SidebarTheme } from './sidebar-theme';
 
 export interface SidebarConfigModel {
@@ -21,9 +21,11 @@ export interface SidebarFeatureOptions {
   profile?: boolean;
   notifications?: boolean;
   messages?: boolean;
+  footerItems?: FooterItem[];
   footerMode?: 'all' | 'single' | 'none';
   collapsedFooterButton?: 'notifications' | 'messages' | 'settings' | 'logout';
   toggleButton?: boolean;
+  toggleButtonIcons?: ToggleButtonIcons;
 }
 export interface SidebarLayoutOptions {
   width?: number;
