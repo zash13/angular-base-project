@@ -30,7 +30,10 @@
     "@angular/forms": "^21.1.0",
     "@angular/material": "^21.1.0",
     "@angular/platform-browser": "^21.1.0",
+    "@primeng/themes": "^21.0.1",
     "lodash-es": "^4.17.23",
+    "primeicons": "^7.0.0",
+    "primeng": "^21.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

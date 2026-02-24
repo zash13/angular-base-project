@@ -1,0 +1,47 @@
+.highlighted-text {
+    background-color: yellow;
+    color: black;
+    border-radius: 2px;
+}
+
+.excel-export-tooltip .bool-icon {
+    text-shadow: 0 0 2px white, 0 0 3px white;
+}
+.excel-export-tooltip .bool-true {
+    color: green;
+}
+.excel-export-tooltip .bool-false {
+    color: red;
+}
+
+
+/* Column filter open button */
+.p-datatable-column-filter-button.p-button-icon-only.p-button-rounded {
+  height: var(--p-icon-size) !important;
+  width: var(--p-icon-size) !important;
+  border-radius: 0 !important;
+}
+/* Column filter clear button */
+.p-datatable-column-filter-clear-button.p-button-icon-only.p-button-rounded {
+  height: var(--p-icon-size) !important;
+  width: var(--p-icon-size) !important;
+  border-radius: 0 !important;
+}
+
+.viewButton {
+  width: 200px;
+}
+
+.viewButton .p-button {
+  width: 100%;
+  justify-content: center;
+}
+
+.viewButton .p-button-label {
+  display: block;
+  width: 100%;
+  overflow: hidden;         
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}

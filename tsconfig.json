@@ -12,18 +12,9 @@
     "isolatedModules": true,
     "experimentalDecorators": true,
     "paths": {
-      "navbar": [
-        "./dist/navbar"
-      ],
-      "side": [
-        "./dist/side"
-      ],
-      "sidebar": [
-        "./dist/sidebar"
-      ],
-      "ui": [
-        "./dist/ui"
-      ]
+      "navbar": ["./dist/navbar"],
+      "sidebar": ["./dist/sidebar"],
+      "ui": ["./dist/prime-table"]
     },
     "importHelpers": true,
     "target": "ES2022",
@@ -38,16 +29,10 @@
   "files": [],
   "references": [
     {
-      "path": "./projects/side/tsconfig.lib.json"
+      "path": "./projects/primeng-table/tsconfig.lib.json"
     },
     {
-      "path": "./projects/side/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/ui/tsconfig.lib.json"
-    },
-    {
-      "path": "./projects/ui/tsconfig.spec.json"
+      "path": "./projects/primeng-table/tsconfig.spec.json"
     },
     {
       "path": "./projects/sidebar/tsconfig.lib.json"

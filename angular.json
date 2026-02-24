@@ -7,20 +7,20 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "side": {
+    "prime-table": {
       "projectType": "library",
-      "root": "projects/side",
-      "sourceRoot": "projects/side/src",
+      "root": "projects/primeng-table",
+      "sourceRoot": "projects/primeng-table/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "projects/side/tsconfig.lib.prod.json"
+              "tsConfig": "projects/primeng-table/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/side/tsconfig.lib.json"
+              "tsConfig": "projects/primeng-table/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -28,33 +28,7 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "projects/side/tsconfig.spec.json"
-          }
-        }
-      }
-    },
-    "ui": {
-      "projectType": "library",
-      "root": "projects/ui",
-      "sourceRoot": "projects/ui/src",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular/build:ng-packagr",
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/ui/tsconfig.lib.prod.json"
-            },
-            "development": {
-              "tsConfig": "projects/ui/tsconfig.lib.json"
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "test": {
-          "builder": "@angular/build:unit-test",
-          "options": {
-            "tsConfig": "projects/ui/tsconfig.spec.json"
+            "tsConfig": "projects/primeng-table/tsconfig.spec.json"
           }
         }
       }
